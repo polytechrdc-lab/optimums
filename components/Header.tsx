@@ -221,7 +221,25 @@ export default function Header() {
                 {openDropdown === 'qhse' && 'QHSE'}
                 {openDropdown === 'carriere' && 'Carrières'}
               </h3>
-              <p className="mega-desc">Parcourez la section et ses liens clés.</p>
+              <p className="mega-desc">
+                {openDropdown === 'services' && 'Solutions d’infrastructure télécom, ingénierie et opérations pour déployer plus vite et maintenir plus sûr.'}
+                {openDropdown === 'clients' && 'Des offres adaptées aux opérateurs, entreprises et acteurs publics, avec preuves et retours terrain.'}
+                {openDropdown === 'implantations' && 'Notre présence, nos sites et notre couverture : où nous opérons et comment nous vous accompagnons.'}
+                {openDropdown === 'apropos' && 'Notre mission, gouvernance et actualités — ce qui nous anime et comment nous travaillons.'}
+                {openDropdown === 'qhse' && 'Qualité, sécurité et environnement au cœur des opérations, avec processus et certifications.'}
+                {openDropdown === 'carriere' && 'Rejoindre une équipe terrain et métier, au service d’infrastructures essentielles.'}
+              </p>
+              <a
+                className="ed-cta"
+                href={
+                  openDropdown === 'services' ? '#services' :
+                  openDropdown === 'clients' ? '#clients' :
+                  openDropdown === 'implantations' ? '#implantations' :
+                  openDropdown === 'apropos' ? '#apropos' :
+                  openDropdown === 'qhse' ? '#qhse' :
+                  openDropdown === 'carriere' ? '#carriere' : '#'
+                }
+              >En savoir plus <span className="ed-cta-chevron" aria-hidden /></a>
             </div>
             <div className="mega-right">
               {openDropdown === 'services' && (
