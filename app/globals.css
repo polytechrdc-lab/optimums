@@ -709,6 +709,7 @@ main { padding-top: var(--utility-h, 32px); }
 @media (prefers-reduced-motion: reduce) {
   .mega-heading-link::after { transition: none; transform: scaleX(1); }
   .mega-heading-link .heading-chevron { transition: none; transform: rotate(45deg); }
+  .mega-caret { transition: none; animation: none; opacity: 1; }
   .mega-panel .mega-left,
   .mega-panel .mega-right,
   .mega-panel .mega-left .mega-heading-link,
@@ -719,13 +720,19 @@ main { padding-top: var(--utility-h, 32px); }
 .mega-caret {
   position: fixed;
   top: calc(var(--header-h, 72px) + var(--utility-h, 0px));
-  transform: translate(-50%, -100%) translateY(1px); /* overlap 1px */
+  left: 0;
   width: 0; height: 0;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-bottom: 10px solid var(--primary); /* Caret fill */
-  z-index: 91;
+  border-bottom: 10px solid var(--brand);
+  filter: drop-shadow(0 1px 1px rgba(1,4,22,0.06));
+  z-index: 91; /* above panel top border */
+  opacity: 0;
+  transform: translateX(calc(var(--caret-x, 0px))) translateY(-100%) translateY(1px);
+  transition: opacity var(--motion-fast) var(--ease-base), transform var(--motion-fast) var(--ease-base);
+  animation: caret-in var(--motion-fast) var(--ease-base) both;
 }
+@keyframes caret-in { from { opacity: 0; transform: translateX(calc(var(--caret-x, 0px))) translateY(-100%) translateY(-2px); } to { opacity: 1; transform: translateX(calc(var(--caret-x, 0px))) translateY(-100%) translateY(1px); } }
 @media (max-width: 899px) {
   .mega-panel { display: none !important; }
 }

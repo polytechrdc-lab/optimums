@@ -13,6 +13,7 @@ export default function Header() {
   const [openDropdown, setOpenDropdown] = useState<DropdownId>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerOpenId, setDrawerOpenId] = useState<DropdownId>(null);
+  const [caretX, setCaretX] = useState<number | null>(null);
   const searchBtnRef = useRef<HTMLButtonElement>(null);
   const [searchOpen, setSearchOpen] = useState(false);
 
@@ -83,6 +84,23 @@ export default function Header() {
     const next = (idx + dir + items.length) % items.length;
     items[next].focus();
   };
+
+  // Recompute caret horizontal position under active tab
+  useEffect(() => {
+    if (!openDropdown) { setCaretX(null); return; }
+    const update = () => {
+      const btn = document.getElementById(`btn-${openDropdown}`);
+      if (!btn) { setCaretX(null); return; }
+      const rect = btn.getBoundingClientRect();
+      const center = rect.left + rect.width / 2;
+      const vw = Math.max(0, window.innerWidth || 0);
+      const clamped = Math.max(12, Math.min(vw - 12, center));
+      setCaretX(clamped);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [openDropdown]);
 
   return (
     <>
@@ -211,6 +229,10 @@ export default function Header() {
             }
           }}
         >
+          {/* Caret: small triangle aligned under active tab */}
+          {caretX !== null && (
+            <div className="mega-caret" style={{ ['--caret-x' as any]: `${caretX}px` }} aria-hidden="true" />
+          )}
           <div className="container mega-grid">
             <div className="mega-left">
               <h3 className="mega-title">
