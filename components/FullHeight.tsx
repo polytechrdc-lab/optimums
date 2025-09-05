@@ -1,122 +1,221 @@
-"use client";
-import { useEffect, useRef } from 'react';
+﻿"use client";
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
-// Images pour la pile multi-calques
-import imgA from '../image/body/paysage.jpg'; // Paysage (milieu)
-import imgB from '../image/body/t2.jpg'; // Tour (petite, avant-plan)
-import imgC from '../image/body/satisfied-customer.jpg'; // Satisfied customer (grand fond, carré)
-// Badge décoratif
-import worldSvg from '../image/body/world-minified.svg?url';
+// Calques
+import imgLandscape from '../image/body/paysage.jpg';
+import imgPortrait from '../image/body/t2.jpg';
+import imgBackground from '../image/body/satisfied-customer.jpg';
+
+type Breakpoint = 'mobile' | 'tablet' | 'desktop';
 
 export default function FullHeight() {
   const sectionRef = useRef<HTMLElement>(null);
-  const stackRef = useRef<HTMLDivElement>(null);
-  const layerARef = useRef<HTMLDivElement>(null);
-  const layerBRef = useRef<HTMLDivElement>(null);
-  const layerCRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const bgRef = useRef<HTMLDivElement>(null);
+  const midRef = useRef<HTMLDivElement>(null);
+  const fgRef = useRef<HTMLDivElement>(null);
+  const vbarRef = useRef<HTMLDivElement>(null);
+  const hbarRef = useRef<HTMLDivElement>(null);
 
+  // Mirror disposition (false = AT baseline, true = flipped)
+  const MIRROR = true;
+
+  const [bp, setBp] = useState<Breakpoint>('desktop');
+  const [dims, setDims] = useState({ W: 620, H: 480 });
+  const [plx, setPlx] = useState({ a: 0, b: 0, c: 0 });
+
+  // Compute breakpoint + wrapper dims
   useEffect(() => {
-    if (typeof window === 'undefined' || typeof document === 'undefined') return;
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const reduceMotion = () => mq.matches;
-
-    const onScroll = () => {
-      const holder = sectionRef.current;
-      const stack = stackRef.current;
-      const A = layerARef.current;
-      const B = layerBRef.current;
-      const C = layerCRef.current;
-      if (!holder || !stack || !A || !B || !C) return;
-
-      const rect = holder.getBoundingClientRect();
-      const vh = window.innerHeight || 1;
-      const vw = window.innerWidth || 1024;
-
-      // Progress through the section [0..1]
-      const denom = vh + rect.height || 1;
-      const raw = (vh - rect.top) / denom;
-      const progress = Math.max(0, Math.min(1, raw));
-
-      // Base reposition (eat vertical gap, push right)
-      const baseShiftY = vw < 768 ? 12 : vw < 1200 ? 64 : 120;
-      const baseShiftX = vw < 768 ? 4 : vw < 1200 ? 16 : 40;
-      stack.style.transform = `translate(${baseShiftX}px, ${-baseShiftY}px)`;
-
-      // Container dimensions per breakpoint (acceptance sizing)
-      const cont = stack.parentElement as HTMLDivElement;
-      const isMobile = vw < 768;
-      const isTablet = vw >= 768 && vw < 1280;
-      const isDesktop = vw >= 1280;
-      if (cont) {
-        cont.style.width = isDesktop ? '720px' : isTablet ? '600px' : '360px';
-        cont.style.height = isDesktop ? '560px' : isTablet ? '520px' : '420px';
-        cont.style.overflow = 'visible';
-        cont.style.borderRadius = '24px';
+    const calc = () => {
+      const w = window.innerWidth || 1280;
+      const nextBp: Breakpoint = w < 768 ? 'mobile' : w < 1280 ? 'tablet' : 'desktop';
+      setBp(nextBp);
+      if (nextBp === 'desktop') setDims({ W: 620, H: 480 });
+      else if (nextBp === 'tablet') setDims({ W: 520, H: 420 });
+      else {
+        const cw = wrapperRef.current?.parentElement?.clientWidth ?? Math.min(480, w - 24);
+        const H = Math.max(420, Math.min(460, Math.round((cw || 360) * 0.72)));
+        setDims({ W: cw || 360, H });
       }
-
-      // Layer A — Fond (satisfied-customer) square inside container
-      const aContW = isDesktop ? 720 : isTablet ? 600 : 360;
-      const aContH = isDesktop ? 560 : isTablet ? 520 : 420;
-      const aSide = Math.min(aContH, aContW); // square side
-      const aW = aSide;
-      const aH = aSide;
-      Object.assign(A.style, {
-        width: `${aW}px`,
-        height: `${aH}px`,
-        left: '0',
-        top: '0',
-        right: 'auto',
-        bottom: 'auto',
-        borderRadius: '24px',
-        zIndex: '1',
-      });
-
-      // Layer B — Milieu (paysage), 50% width of A, shifted left by 30% of its width
-      const b2W = Math.round(aW * 0.5); // 50%
-      const b2H = Math.round(b2W * (2 / 3)); // ~3:2
-      const b2Top = isDesktop ? 64 : isTablet ? 48 : 24;
-      const b2Shift = Math.round(b2W * 0.3); // 30% left translate
-      Object.assign(B.style, {
-        width: `${b2W}px`,
-        height: `${b2H}px`,
-        left: '0',
-        top: `${b2Top}px`,
-        right: 'auto',
-        bottom: 'auto',
-        borderRadius: '24px',
-        zIndex: '2',
-        transform: `translate(${-b2Shift}px, 0)`
-      });
-
-      // Layer C — Petite (tour), ~28% of A on desktop; tablet 26%; mobile 36%
-      const cPct = isDesktop ? 0.28 : isTablet ? 0.26 : 0.36;
-      const cW = Math.round(aW * cPct);
-      const cH = isDesktop ? 280 : isTablet ? 220 : 180;
-      const cTop = isDesktop ? 16 : isTablet ? 12 : 8;
-      const cLeft = isDesktop ? 48 : isTablet ? 36 : 16;
-      const cBorder = isDesktop ? 8 : isTablet ? 6 : 4;
-      Object.assign(C.style, {
-        width: `${cW}px`,
-        height: `${cH}px`,
-        left: `${cLeft}px`,
-        top: `${cTop}px`,
-        right: 'auto',
-        bottom: 'auto',
-        borderRadius: '24px',
-        zIndex: '3',
-        border: `${cBorder}px solid #fff`,
-      });
-
-      // Parallax movements (translateY only). Disable on reduced motion.
-      const aMove = reduceMotion() ? 0 : (progress - 0.5) * 2 * (isDesktop ? 30 : isTablet ? 25 : 20);
-      const bMove = reduceMotion() ? 0 : (progress - 0.5) * 2 * (isDesktop ? 60 : isTablet ? 55 : 50);
-      const cMove = reduceMotion() ? 0 : (progress - 0.5) * 2 * (isDesktop ? 100 : isTablet ? 90 : 80);
-      // Apply translates, preserving X translate for B (left shift)
-      B.style.transform = `translate(${-b2Shift}px, ${bMove.toFixed(1)}px)`;
-      A.style.transform = `translate(0, ${aMove.toFixed(1)}px)`;
-      C.style.transform = `translate(0, ${cMove.toFixed(1)}px)`;
     };
+    calc();
+    window.addEventListener('resize', calc);
+    return () => window.removeEventListener('resize', calc);
+  }, []);
 
+  // Layout: positions and sizes per spec (percent of W/H)
+  useEffect(() => {
+    const wrap = wrapperRef.current;
+    const A = bgRef.current; // fond
+    const B = midRef.current; // paysage
+    const C = fgRef.current; // portrait
+    const VB = vbarRef.current; // barre verticale
+    const HB = hbarRef.current; // barre horizontale
+    if (!wrap || !A || !B || !C || !VB || !HB) return;
+
+    // Ensure mobile width uses container width
+    if (bp === 'mobile') {
+      const contW = wrap.parentElement?.clientWidth ?? dims.W;
+      if (Math.abs(contW - dims.W) > 2) {
+        setDims(d => ({ ...d, W: contW }));
+      }
+    }
+
+    const { W, H } = dims;
+    const radius = 12; // rayon d'angle unifié (12–16px)
+    const bar = bp === 'desktop' ? 16 : bp === 'tablet' ? 14 : 12;
+
+    // Wrapper — keep internal unchanged; only adjust outer placement/bleed
+    // Compute right bleed with safe-area (desktop only): +40..+64px, safe-area ≥16px
+    let bleedX = 0;
+    if (bp === 'desktop') {
+      const parent = wrap.parentElement as HTMLElement | null; // .wm-illus
+      const pr = parent?.getBoundingClientRect();
+      const vw = window.innerWidth || 1280;
+      const spaceRight = pr ? Math.max(0, vw - pr.right) : 0; // gap between parent right and viewport right
+      const maxBleed = Math.max(0, spaceRight - 16); // respect 16px safe-area
+      // Prefer 40–64px, but do not exceed maxBleed (safe-area wins over min bleed)
+      bleedX = Math.min(64, maxBleed);
+    } else if (bp === 'tablet') {
+      // Tablet: +24..+32px, but keep 16px safe-area
+      const parent = wrap.parentElement as HTMLElement | null;
+      const pr = parent?.getBoundingClientRect();
+      const vw = window.innerWidth || 1024;
+      const spaceRight = pr ? Math.max(0, vw - pr.right) : 0;
+      const maxBleed = Math.max(0, spaceRight - 16);
+      bleedX = Math.min(32, maxBleed);
+    } else {
+      bleedX = 0; // no bleed on mobile
+    }
+
+    Object.assign(wrap.style, {
+      position: 'relative',
+      width: bp === 'mobile' ? '100%' : `${W}px`,
+      height: `${H}px`,
+      overflow: 'visible',
+      borderRadius: `${radius}px`,
+      right: `${-bleedX}px`, // bleed to the right without creating a new stacking context
+    });
+
+    // Calque 1 — GRAND FOND (remplit le wrapper)
+    Object.assign(A.style, {
+      position: 'absolute', inset: '0', zIndex: '1', overflow: 'hidden', borderRadius: `${radius}px`,
+    } as any);
+
+    // Calque 2 — MILIEU (paysage) — plus petit, équilibré
+    const bPct = bp === 'desktop' ? 0.62 : bp === 'tablet' ? 0.58 : 0.66; // largeur
+    const bGrow = 1.25; // +25% vers la droite (garde l'ancrage côté gauche/droit)
+    const bW = Math.round(bPct * W * bGrow);
+    // Base height for ~21:9, doubled then reduced by 25% per request
+    const bH = Math.round((bW * 0.42) * 2 * 0.75);
+    const bLeft = !MIRROR ? Math.round(-0.08 * W) : undefined;
+    const bRight = MIRROR ? Math.round(-0.08 * W) : undefined;
+    const bBottom = Math.round((bp === 'desktop' ? -0.05 : bp === 'tablet' ? -0.04 : -0.03) * H);
+    Object.assign(B.style, {
+      position: 'absolute',
+      width: `${bW}px`,
+      height: `${bH}px`,
+      left: bLeft !== undefined ? `${bLeft}px` : 'auto',
+      right: bRight !== undefined ? `${bRight}px` : 'auto',
+      bottom: `${bBottom}px`,
+      zIndex: '2',
+      overflow: 'hidden',
+      borderRadius: `${radius}px`,
+    } as any);
+
+    // Calque 3 — PETIT PORTRAIT
+    const cPct = bp === 'desktop' ? 0.28 : bp === 'tablet' ? 0.26 : 0.40; // largeur
+    const cW = Math.round(cPct * W);
+    const cH = Math.round(cW * 1.33);
+    const anchorPct = bp === 'desktop' ? 0.56 : bp === 'tablet' ? 0.54 : 0.52; // pos. from side
+    const cLeft = !MIRROR ? Math.round(anchorPct * W) : undefined;
+    const cRight = MIRROR ? Math.round(anchorPct * W) : undefined;
+    const cBottom = Math.round((bp === 'desktop' ? -0.03 : bp === 'tablet' ? -0.03 : -0.02) * H);
+    Object.assign(C.style, {
+      position: 'absolute',
+      width: `${cW}px`,
+      height: `${cH}px`,
+      left: cLeft !== undefined ? `${cLeft}px` : 'auto',
+      right: cRight !== undefined ? `${cRight}px` : 'auto',
+      bottom: `${cBottom}px`,
+      zIndex: '3',
+      overflow: 'hidden',
+      borderRadius: `${radius}px`,
+      boxShadow: '0 8px 20px rgba(0,0,0,0.10)',
+    } as any);
+
+    // Barres de marque (derrière tout)
+    const vHeight = Math.round((bp === 'desktop' ? 0.84 : 0.82) * H);
+    const vTop = Math.round(0.08 * H);
+    Object.assign(VB.style, {
+      position: 'absolute',
+      width: `${bar}px`,
+      height: `${vHeight}px`,
+      top: `${vTop}px`,
+      left: `${-bar}px`,
+      right: 'auto',
+      zIndex: '0',
+      background: 'var(--brandPrimary, #E30613)',
+      borderRadius: '0',
+      boxShadow: 'none',
+    } as any);
+
+    const hWidth = Math.round((bp === 'desktop' ? 0.22 : bp === 'tablet' ? 0.20 : 0.18) * W);
+    const hBottom = -bar;
+    Object.assign(HB.style, {
+      position: 'absolute',
+      height: `${bar}px`,
+      width: `${hWidth}px`,
+      bottom: `${hBottom}px`,
+      right: `${-bar}px`,
+      zIndex: '0',
+      background: 'var(--brandPrimary, #E30613)',
+      borderRadius: '0',
+      boxShadow: 'none',
+    } as any);
+  }, [bp, dims, MIRROR]);
+
+  // Parallaxe (translateY uniquement) — subtile, fenêtre = hauteur de section
+  useEffect(() => {
+    const el = sectionRef.current;
+    const A = bgRef.current;
+    const B = midRef.current;
+    const C = fgRef.current;
+    if (!el || !A || !B || !C) return;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const onScroll = () => {
+      if (reduce.matches) {
+        A.style.transform = 'none';
+        B.style.transform = 'none';
+        C.style.transform = 'none';
+        setPlx({ a: 0, b: 0, c: 0 });
+        return;
+      }
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+      const denom = r.height + vh;
+      const raw = (vh - r.top) / (denom || 1);
+      const p = Math.max(0, Math.min(1, raw));
+      // Totaux cibles (aller-retour visuel ≈ 2*amp):
+      // Fond ~16–24px, Milieu ~32–48px, Avant ~56–80px
+      const ampA = bp === 'desktop' ? 12 : bp === 'tablet' ? 11 : 8;  // total ≈ 24 / 22 / 16
+      const ampB = bp === 'desktop' ? 24 : bp === 'tablet' ? 20 : 16; // total ≈ 48 / 40 / 32
+      const ampC = bp === 'desktop' ? 40 : bp === 'tablet' ? 36 : 28; // total ≈ 80 / 72 / 56
+      // Use smoothstep S-curve for all layers so the band visibly glides
+      // between the slower background and faster vignette.
+      // smoothstep: s = 3x^2 - 2x^3 (x in [0,1]) then center to [-1,1]
+      const x = p;
+      const s = 3 * x * x - 2 * x * x * x;
+      const sCentered = (s - 0.5) * 2; // [-1,1]
+      const tA = sCentered * ampA;       // slowest
+      const tB = sCentered * (ampB * 1.1); // mid, slight boost to emphasize glide
+      const tC = sCentered * ampC;       // fastest
+      A.style.transform = `translateY(${tA.toFixed(1)}px)`;
+      B.style.transform = `translateY(${tB.toFixed(1)}px)`;
+      C.style.transform = `translateY(${tC.toFixed(1)}px)`;
+      setPlx({ a: tA, b: tB, c: tC });
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true } as any);
     window.addEventListener('resize', onScroll);
@@ -124,21 +223,22 @@ export default function FullHeight() {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
     };
-  }, []);
+  }, [bp]);
+
+  const sizesMid = useMemo(() => (
+    bp === 'desktop' ? '480px' : bp === 'tablet' ? '378px' : '82vw'
+  ), [bp]);
+  const sizesFg = useMemo(() => (
+    bp === 'desktop' ? '174px' : bp === 'tablet' ? '135px' : '40vw'
+  ), [bp]);
 
   return (
-    <section ref={sectionRef} className="full-hero" aria-label="Section pleine hauteur">
+    <section ref={sectionRef} className="full-hero" aria-label="Section collage parallax miroir">
       <div className="container wm-grid">
-        {/* Copy block (left), centered */}
         <div className="wm-copy wm-reveal wm-copy-center">
-          {/* Decorative SVG placed above the text */}
-          <div className="wm-badge" aria-hidden>
-            <img src={worldSvg} alt="" width={44} height={44} style={{ display: 'block' }} />
-          </div>
           <p className="wm-body">
-            Relier les communautés et créer des opportunités — notre mission est de connecter
-            durablement les personnes et les entreprises grâce à des infrastructures fiables et
-            accessibles, afin de développer les marchés et soutenir la croissance locale.
+            Relier les communautés et créer des opportunités — notre mission est de connecter durablement
+            les personnes et les entreprises grâce à des infrastructures fiables et accessibles.
           </p>
           <a href="#apropos" className="wm-cta" aria-label="En savoir plus sur notre mission">
             <span className="label">En savoir plus sur notre mission</span>
@@ -150,54 +250,43 @@ export default function FullHeight() {
             </span>
           </a>
         </div>
-        {/* Illustration — pile multi-calques avec parallaxe */}
         <div className="wm-illus" aria-hidden={false}>
-          <div
-            className="wm-map-wrap"
-            style={{
-              position: 'relative',
-              width: '620px',
-              maxWidth: '100%',
-              height: '560px',
-              borderRadius: 24,
-              marginRight: '-16px',
-              overflow: 'visible',
-            }}
-          >
-            <div ref={stackRef} style={{ position: 'absolute', inset: 0 }}>
-              {/* Calque A — Fond (satisfied-customer) */}
-              <div ref={layerARef} style={{ position: 'absolute', zIndex: 1, overflow: 'hidden', borderRadius: 24 }}>
-                <Image
-                  src={imgC}
-                  alt=""
-                  fill
-                  sizes="(max-width: 1279px) 520px, 560px"
-                  priority
-                  style={{ objectFit: 'cover', objectPosition: '55% 50%' }}
-                />
-              </div>
-              {/* Calque B — Milieu (paysage) */}
-              <div ref={layerBRef} style={{ position: 'absolute', zIndex: 2, overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.06)', borderRadius: 24 }}>
-                <Image
-                  src={imgA}
-                  alt="Paysage"
-                  fill
-                  sizes="(max-width: 1279px) 300px, 360px"
-                  priority
-                  style={{ objectFit: 'cover', objectPosition: '50% 50%' }}
-                />
-              </div>
-              {/* Calque C — Avant-plan (tour, vignette) */}
-              <div ref={layerCRef} style={{ position: 'absolute', zIndex: 3, overflow: 'visible', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', borderRadius: 24 }}>
-                <Image
-                  src={imgB}
-                  alt="Tour de télécommunication"
-                  fill
-                  sizes="(max-width: 1279px) 156px, 200px"
-                  priority
-                  style={{ objectFit: 'cover', objectPosition: '50% 35%' }}
-                />
-              </div>
+          <div ref={wrapperRef}>
+            {/* Barres de marque (derrière) */}
+            <div ref={vbarRef} />
+            <div ref={hbarRef} />
+            {/* Calque 1 — GRAND FOND */}
+            <div ref={bgRef}>
+              <Image
+                src={imgBackground}
+                alt=""
+                fill
+                priority
+                sizes="(min-width: 1280px) 620px, (min-width: 768px) 520px, 100vw"
+                style={{ objectFit: 'cover', objectPosition: '55% 50%' }}
+              />
+            </div>
+            {/* Calque 2 — MILIEU (paysage) */}
+            <div ref={midRef}>
+              <Image
+                src={imgLandscape}
+                alt="Bande paysage"
+                fill
+                priority
+                sizes={sizesMid}
+                style={{ objectFit: 'cover', objectPosition: '50% 50%' }}
+              />
+            </div>
+            {/* Calque 3 — PETIT PORTRAIT */}
+            <div ref={fgRef}>
+              <Image
+                src={imgPortrait}
+                alt="Tour télécom"
+                fill
+                priority
+                sizes={sizesFg}
+                style={{ objectFit: 'cover', objectPosition: '50% 38%' }}
+              />
             </div>
           </div>
         </div>
@@ -205,3 +294,4 @@ export default function FullHeight() {
     </section>
   );
 }
+
