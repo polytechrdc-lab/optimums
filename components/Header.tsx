@@ -229,27 +229,7 @@ export default function Header() {
                 {openDropdown === 'qhse' && 'Qualité, sécurité et environnement au cœur des opérations, avec processus et certifications.'}
                 {openDropdown === 'carriere' && 'Rejoindre une équipe terrain et métier, au service d’infrastructures essentielles.'}
               </p>
-              <a
-                className="ed-cta"
-                aria-label={
-                  'Découvrir la section ' + (
-                    openDropdown === 'services' ? 'Nos services' :
-                    openDropdown === 'clients' ? 'Nos clients' :
-                    openDropdown === 'implantations' ? 'Implantations' :
-                    openDropdown === 'apropos' ? 'À propos' :
-                    openDropdown === 'qhse' ? 'QHSE' :
-                    openDropdown === 'carriere' ? 'Carrières' : ''
-                  )
-                }
-                href={
-                  openDropdown === 'services' ? '#services' :
-                  openDropdown === 'clients' ? '#clients' :
-                  openDropdown === 'implantations' ? '#implantations' :
-                  openDropdown === 'apropos' ? '#apropos' :
-                  openDropdown === 'qhse' ? '#qhse' :
-                  openDropdown === 'carriere' ? '#carriere' : '#'
-                }
-              >En savoir plus <span className="ed-cta-chevron" aria-hidden /></a>
+              {/* Editorial CTA intentionally removed per spec (no CTAs in mega menus) */}
             </div>
             <div className="mega-right">
               {openDropdown === 'services' && (
@@ -274,11 +254,7 @@ export default function Header() {
                     <a href="#services-soc" className="dropdown-link">SOC & détection</a>
                     <a href="#services-cloud" className="dropdown-link">Cloud & DevOps managé</a>
                   </div>
-                  <div className="dropdown-highlight">
-                    <div className="group-title">Étude de cas</div>
-                    <p className="muted">Résultats clés sur 2–3 lignes.</p>
-                    <a href="#devis" className="btn">Demander un devis</a>
-                  </div>
+                  {/* CTA block removed */}
                 </>
               )}
               {openDropdown === 'clients' && (
@@ -366,11 +342,7 @@ export default function Header() {
                     <a href="#processus" className="dropdown-link">Processus de recrutement</a>
                     <a href="#avantages" className="dropdown-link">Avantages</a>
                   </div>
-                  <div className="dropdown-highlight">
-                    <div className="group-title">Rejoignez-nous</div>
-                    <p className="muted">Contribuez à des projets d'infrastructure d'impact.</p>
-                    <a href="#jobs-ouverts" className="btn">Voir les offres</a>
-                  </div>
+                  {/* CTA block removed */}
                 </>
               )}
             </div>
