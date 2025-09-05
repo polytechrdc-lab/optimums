@@ -231,6 +231,16 @@ export default function Header() {
               </p>
               <a
                 className="ed-cta"
+                aria-label={
+                  'Découvrir la section ' + (
+                    openDropdown === 'services' ? 'Nos services' :
+                    openDropdown === 'clients' ? 'Nos clients' :
+                    openDropdown === 'implantations' ? 'Implantations' :
+                    openDropdown === 'apropos' ? 'À propos' :
+                    openDropdown === 'qhse' ? 'QHSE' :
+                    openDropdown === 'carriere' ? 'Carrières' : ''
+                  )
+                }
                 href={
                   openDropdown === 'services' ? '#services' :
                   openDropdown === 'clients' ? '#clients' :
