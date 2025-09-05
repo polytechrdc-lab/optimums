@@ -214,12 +214,35 @@ export default function Header() {
           <div className="container mega-grid">
             <div className="mega-left">
               <h3 className="mega-title">
-                {openDropdown === 'services' && 'Nos services'}
-                {openDropdown === 'clients' && 'Nos clients'}
-                {openDropdown === 'implantations' && 'Implantations'}
-                {openDropdown === 'apropos' && 'À propos'}
-                {openDropdown === 'qhse' && 'QHSE'}
-                {openDropdown === 'carriere' && 'Carrières'}
+                <a
+                  className="mega-heading-link"
+                  href={
+                    openDropdown === 'services' ? '#services' :
+                    openDropdown === 'clients' ? '#clients' :
+                    openDropdown === 'implantations' ? '#implantations' :
+                    openDropdown === 'apropos' ? '#apropos' :
+                    openDropdown === 'qhse' ? '#qhse' :
+                    openDropdown === 'carriere' ? '#carriere' : '#'
+                  }
+                  aria-label={
+                    'Découvrir la section ' + (
+                      openDropdown === 'services' ? 'Nos services' :
+                      openDropdown === 'clients' ? 'Nos clients' :
+                      openDropdown === 'implantations' ? 'Implantations' :
+                      openDropdown === 'apropos' ? 'À propos' :
+                      openDropdown === 'qhse' ? 'QHSE' :
+                      openDropdown === 'carriere' ? 'Carrières' : ''
+                    )
+                  }
+                >
+                  {openDropdown === 'services' && 'Nos services'}
+                  {openDropdown === 'clients' && 'Nos clients'}
+                  {openDropdown === 'implantations' && 'Implantations'}
+                  {openDropdown === 'apropos' && 'À propos'}
+                  {openDropdown === 'qhse' && 'QHSE'}
+                  {openDropdown === 'carriere' && 'Carrières'}
+                  <span className="heading-chevron" aria-hidden />
+                </a>
               </h3>
               <p className="mega-desc">
                 {openDropdown === 'services' && 'Solutions d’infrastructure télécom, ingénierie et opérations pour déployer plus vite et maintenir plus sûr.'}

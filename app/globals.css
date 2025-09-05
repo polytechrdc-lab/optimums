@@ -16,6 +16,7 @@
   --motion-fast: 180ms;
   --motion-base: 240ms;
   --brandPrimary: var(--primary);
+  --brand: var(--primary);
   --headerFgLight: #ffffff;
   --headerFgDark: var(--ink);
   --headerTint: color-mix(in srgb, var(--brandPrimary) 28%, transparent);
@@ -646,12 +647,16 @@ main { padding-top: var(--utility-h, 32px); }
 .mega-heading-link {
   display: inline-flex;
   align-items: baseline;
-  gap: 8px;
-  font-weight: 700;
+  gap: 8px; /* small gap between text and chevron */
+  font-weight: 600; /* semi-bold */
   font-size: 22px; /* 20–22 px */
-  color: #006AF8;
+  color: var(--brand);
   text-decoration: none;
+  position: relative;
 }
+.mega-heading-link::after { content: ''; position: absolute; left: 0; bottom: -3px; width: 100%; height: 2px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 160ms var(--ease-base); }
+.mega-heading-link:hover::after, .mega-heading-link:focus-visible::after { transform: scaleX(1); }
+.mega-heading-link:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
 .mega-heading-link:focus-visible { outline: 2px solid #006AF8; outline-offset: 2px; border-radius: 4px; }
 .heading-chevron {
   display: inline-block;
@@ -659,7 +664,7 @@ main { padding-top: var(--utility-h, 32px); }
   border-right: 2px solid currentColor;
   border-top: 2px solid currentColor;
   transform: rotate(45deg); /* right-pointing */
-  transition: transform 160ms ease;
+  transition: transform 160ms var(--ease-base);
 }
 .mega-heading-link:hover .heading-chevron,
 .mega-heading-link:focus-visible .heading-chevron {
@@ -702,6 +707,8 @@ main { padding-top: var(--utility-h, 32px); }
 .mega-panel .mega-right .dropdown-link:nth-of-type(11) { animation-delay: 480ms; }
 .mega-panel .mega-right .dropdown-link:nth-of-type(12) { animation-delay: 520ms; }
 @media (prefers-reduced-motion: reduce) {
+  .mega-heading-link::after { transition: none; transform: scaleX(1); }
+  .mega-heading-link .heading-chevron { transition: none; transform: rotate(45deg); }
   .mega-panel .mega-left,
   .mega-panel .mega-right,
   .mega-panel .mega-left .mega-heading-link,
