@@ -210,7 +210,8 @@ export default function FullHeight() {
       // Back (hero): ~10–16% total travel of its height
       const ampA = Math.round(Ah * (bp === 'mobile' ? 0.05 : bp === 'tablet' ? 0.07 : 0.08));
       // Middle (landscape): ~45–68% total travel of its height
-      const ampB = Math.round(Bh * (bp === 'mobile' ? 0.26 : bp === 'tablet' ? 0.28 : 0.34));
+      // Cap mobile landscape travel to avoid crowding on short screens
+      const ampB = Math.round(Bh * (bp === 'mobile' ? 0.22 : bp === 'tablet' ? 0.28 : 0.34));
       // Front card: minimal (pinned feel) ~6–8% → slightly more, but still subtle
       const ampC = Math.round(Ch * (bp === 'mobile' ? 0.032 : bp === 'tablet' ? 0.036 : 0.038));
       // Use smoothstep S-curve for all layers so the band visibly glides
