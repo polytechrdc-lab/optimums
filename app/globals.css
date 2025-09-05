@@ -21,6 +21,7 @@
   --headerTint: color-mix(in srgb, var(--brandPrimary) 28%, transparent);
   --shadowHeader: 0 8px 20px rgba(1, 4, 22, 0.12);
   --header-h: 72px; /* default header height at rest (desktop) */
+  --hero-header-contrast: 0.22; /* top gradient opacity over hero for header readability */
   --bg: #0f1320;
   --bg-alt: #141a2a;
   --text: #e8ebf1;
@@ -61,7 +62,7 @@ main { display: flow-root; }
 }
 
 .section { padding: clamp(56px, 8vw, 96px) 0; }
-.full-hero { min-height: 180vh; display: grid; align-items: center; background: #fff; color: var(--ink); overflow: visible; }
+.full-hero { min-height: 140vh; display: grid; align-items: center; background: #fff; color: var(--ink); overflow: visible; }
 /* World map + copy (50/50) */
 .wm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; height: 100%; padding: 146px 0; }
 .wm-illus { display: flex; align-items: flex-start; justify-content: flex-end; }
@@ -304,14 +305,19 @@ main { overflow-x: clip; }
   z-index: 50; /* sits below utility bar (55) */
   color: var(--headerFgLight);
   background: transparent;
-  transition: background 220ms cubic-bezier(.2,.7,.2,1), box-shadow 220ms cubic-bezier(.2,.7,.2,1), color 220ms cubic-bezier(.2,.7,.2,1);
+  /* Performance: limit transitions to opacity/transform */
+  transition: opacity 220ms var(--ease-base);
 }
-.site-header[data-solid="true"] {
+.site-header[data-solid="true"],
+.site-header.is-scrolled {
   background: var(--brandPrimary);
   box-shadow: var(--shadowHeader);
   color: var(--header-fg-solid, var(--headerFgLight));
 }
-.site-header[data-solid="false"] {
+.site-header[data-solid="true"] > .container,
+.site-header.is-scrolled > .container { height: calc(var(--header-h) - 8px); /* instant change (no height transition) */ }
+.site-header[data-solid="false"],
+.site-header:not(.is-scrolled) {
   background: transparent;
   box-shadow: none;
   color: var(--headerFgLight);
@@ -320,8 +326,42 @@ main { overflow-x: clip; }
 .site-header a, .site-header button { color: inherit; }
 .site-header a:focus-visible, .site-header button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
-/* Offset page content for fixed header + utility bar */
-main { padding-top: calc(var(--utility-h, 0px) + var(--header-h, 72px)); }
+/* Offset: utility bar only (hero overlays under header); adjust per-page if needed */
+main { padding-top: var(--utility-h, 32px); }
+
+/* Drawer (mobile) */
+.header-drawer { position: fixed; inset: 0; z-index: 95; pointer-events: none; }
+.header-drawer .drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.45); opacity: 0; transition: opacity 200ms var(--ease-base); }
+.header-drawer .drawer-panel { position: absolute; top: calc(var(--utility-h, 32px)); right: 0; bottom: 0; width: min(86vw, 360px); background: var(--s0); color: var(--ink); box-shadow: -20px 0 60px rgba(1,4,22,0.18); transform: translateX(100%); transition: transform 240ms var(--ease-base); display: grid; grid-template-rows: auto 1fr; }
+.header-drawer.is-open { pointer-events: auto; }
+.header-drawer.is-open .drawer-panel { transform: translateX(0); }
+.header-drawer.is-open .drawer-backdrop { opacity: 1; }
+.drawer-close { background: transparent; border: none; font-size: 28px; padding: 10px 14px; align-self: start; justify-self: end; cursor: pointer; }
+.drawer-list { list-style: none; margin: 0; padding: 0 16px 12px; display: grid; gap: 10px; }
+.drawer-list a { display: block; padding: 10px 8px; border-radius: 8px; color: var(--ink); text-decoration: none; font-weight: 700; }
+.drawer-list a:hover, .drawer-list a:focus-visible { background: #F5F7FA; outline: none; }
+.drawer-utility { margin-top: auto; padding: 10px 16px 16px; display: grid; gap: 8px; border-top: 1px solid #E6EEF9; }
+.drawer-utility a { color: var(--ink); text-decoration: none; font-weight: 600; }
+.drawer-ctas { position: sticky; bottom: 0; background: var(--s0); display: flex; gap: 8px; padding: 12px 16px 16px; border-top: 1px solid #E6EEF9; }
+.drawer-accordion { width: 100%; text-align: left; background: transparent; border: none; font-weight: 800; padding: 12px 8px; cursor: pointer; border-radius: 8px; }
+.drawer-accordion[aria-expanded="true"] { background: #F5F7FA; }
+.drawer-accordion-panel { padding: 0 8px 8px 8px; }
+.drawer-accordion-panel ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.drawer-contact ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.masked { color: #4B5563; cursor: default; }
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header { transition: none; }
+  .site-header > .container { transition: none; }
+  .header-drawer .drawer-panel, .header-drawer .drawer-backdrop { transition: none !important; }
+}
+
+/* UtilityBar non-sticky on mobile; Header remains sticky */
+@media (max-width: 767px) {
+  .utility-bar { position: static; }
+  .site-header { top: 0; }
+  main { padding-top: var(--header-h, 56px); }
+}
 
 /* Responsive header height tokens */
 @media (max-width: 1023px) {
@@ -330,8 +370,8 @@ main { padding-top: calc(var(--utility-h, 0px) + var(--header-h, 72px)); }
 @media (max-width: 767px) {
   :root { --header-h: 56px; }
 }
-/* Input modality-based default for utility height (pre-hydration) */
-@media (pointer: coarse) { :root { --utility-h: 44px; } }
+/* Utility bar is sticky; height adapts on touch via --utility-h */
+/* @media (pointer: coarse) { :root { --utility-h: 44px; } } */
 
 /* Header navigation styles (neutral) */
 .header-desktop-nav { display: none; }
@@ -545,7 +585,7 @@ main { padding-top: calc(var(--utility-h, 0px) + var(--header-h, 72px)); }
   justify-content: center;
   cursor: pointer;
   position: relative;
-  transition: opacity 120ms ease, transform 80ms ease, box-shadow 120ms ease;
+  transition: opacity 120ms ease, transform 80ms ease; /* performance: only opacity/transform */
 }
 .search-btn::before {
   content: '';
@@ -812,6 +852,8 @@ main { padding-top: calc(var(--utility-h, 0px) + var(--header-h, 72px)); }
   position: absolute; inset: 0; z-index: 1;
   /* Darken bottom 40–55% + subtle brand tint wash */
   background:
+    /* top gradient for header readability over hero */
+    linear-gradient(180deg, rgba(1,4,22, var(--hero-header-contrast, 0.22)) 0%, rgba(1,4,22,0.00) 24%),
     /* brand tint (light wash) */
     linear-gradient(0deg,
       color-mix(in srgb, var(--brandPrimary) var(--hero-tint-top, 12%), transparent),
@@ -918,17 +960,15 @@ main { padding-top: calc(var(--utility-h, 0px) + var(--header-h, 72px)); }
 
 /* Utility bar styles */
 .utility-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 55; /* above header (header at 50) */
+  position: fixed; /* sticky at the very top */
+  top: 0; left: 0; right: 0;
+  z-index: 55; /* above header (50) */
   background: var(--utilityBg);
   color: var(--utilityInk);
   border-bottom: 1px solid var(--utilityBorder);
 }
 .utility-grid {
-  height: var(--utility-h);
+  height: var(--utility-h); /* 32px default, 44px on touch */
   display: flex;
   align-items: center;
   gap: 24px; /* 20–24 px as spec */

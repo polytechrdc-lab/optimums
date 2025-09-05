@@ -6,6 +6,9 @@ export default function UtilityBar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuBtnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const accountBtnRef = useRef<HTMLButtonElement>(null);
+  const accountMenuRef = useRef<HTMLDivElement>(null);
   const [lang, setLang] = useState<'FR' | 'EN'>('FR');
 
   // Expose utility height to :root so header can offset correctly
@@ -28,12 +31,13 @@ export default function UtilityBar() {
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
       const t = e.target as Node;
-      if (!menuRef.current?.contains(t) && !menuBtnRef.current?.contains(t)) {
-        setMenuOpen(false);
-      }
+      const inKebab = !!(menuRef.current?.contains(t) || menuBtnRef.current?.contains(t));
+      const inAccount = !!(accountMenuRef.current?.contains(t) || accountBtnRef.current?.contains(t));
+      if (!inKebab) setMenuOpen(false);
+      if (!inAccount) setAccountOpen(false);
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMenuOpen(false);
+      if (e.key === 'Escape') { setMenuOpen(false); setAccountOpen(false); }
     };
     document.addEventListener('mousedown', onDoc);
     document.addEventListener('keydown', onKey);
@@ -114,6 +118,24 @@ export default function UtilityBar() {
           >
             {lang}
           </button>
+          <div className="utility-account-wrap">
+            <button
+              ref={accountBtnRef}
+              type="button"
+              className="utility-toggle"
+              aria-haspopup="true"
+              aria-expanded={accountOpen}
+              aria-controls="intranet-menu"
+              onClick={() => { setAccountOpen(v => !v); track('utility_intranet_toggle'); }}
+            >
+              Intranet
+            </button>
+            {accountOpen && (
+              <div ref={accountMenuRef} id="intranet-menu" role="menu" className="utility-menu" aria-label="Menu intranet">
+                <a role="menuitem" tabIndex={0} className="utility-menuitem" href="/intranet" onClick={() => { setAccountOpen(false); track('utility_intranet_login'); }}>Se connecter à l'intranet</a>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Mobile kebab for corporate links */}
@@ -136,6 +158,7 @@ export default function UtilityBar() {
               <a role="menuitem" tabIndex={0} className="utility-menuitem" href="#investisseurs" onClick={() => { setMenuOpen(false); track('utility_investisseurs'); }}>Investisseurs</a>
               <a role="menuitem" tabIndex={0} className="utility-menuitem" href="#medias" onClick={() => { setMenuOpen(false); track('utility_medias'); }}>Médias</a>
               <a role="menuitem" tabIndex={0} className="utility-menuitem" href="#fournisseurs" onClick={() => { setMenuOpen(false); track('utility_fournisseurs'); }}>Fournisseurs</a>
+              <a role="menuitem" tabIndex={0} className="utility-menuitem" href="/intranet" onClick={() => { setMenuOpen(false); track('utility_intranet_login'); }}>Intranet</a>
               <button role="menuitem" tabIndex={0} className="utility-menuitem utility-menuitem-btn" onClick={() => { toggleLang(); setMenuOpen(false); }} aria-pressed={lang === 'EN'} aria-label="Basculer langue FR/EN">{lang}</button>
             </div>
           )}

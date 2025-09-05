@@ -14,14 +14,17 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preload" as="image" href="/image/logo/LOGO-OPTIMUM-icone.png" />
+      </head>
       <body>
         {/* Skip to content for keyboard navigation */}
         <a href="#main-content" style={{ position: 'absolute', left: -9999 }}>
           Skip to content
         </a>
-        {/* Utility bar above the header (always sticky) */}
+        {/* Utility bar (sticky) */}
         <UtilityBar />
-        {/* Sticky header with responsive nav and dropdowns (placeholder) */}
+        {/* New Header */}
         <Header />
         <main id="main-content" role="main">
           {children}
