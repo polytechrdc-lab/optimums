@@ -61,7 +61,7 @@ main { display: flow-root; }
 }
 
 .section { padding: clamp(56px, 8vw, 96px) 0; }
-.full-hero { min-height: 130vh; display: grid; align-items: center; background: #fff; color: var(--ink); overflow: visible; }
+.full-hero { min-height: 180vh; display: grid; align-items: center; background: #fff; color: var(--ink); overflow: visible; }
 /* World map + copy (50/50) */
 .wm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; height: 100%; padding: 146px 0; }
 .wm-illus { display: flex; align-items: flex-start; justify-content: flex-end; }

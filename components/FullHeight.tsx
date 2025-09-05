@@ -121,6 +121,11 @@ export default function FullHeight() {
       zIndex: '2',
       overflow: 'hidden',
       borderRadius: `${radius}px`,
+      // Soft edge blending via mask to help the "glide" feel
+      WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, #000 10%, #000 90%, rgba(0,0,0,0) 100%)',
+      maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, #000 10%, #000 90%, rgba(0,0,0,0) 100%)',
+      WebkitMaskSize: '100% 100%',
+      maskSize: '100% 100%',
     } as any);
 
     // Calque 3 — PETIT PORTRAIT
@@ -197,11 +202,17 @@ export default function FullHeight() {
       const denom = r.height + vh;
       const raw = (vh - r.top) / (denom || 1);
       const p = Math.max(0, Math.min(1, raw));
-      // Totaux cibles (aller-retour visuel ≈ 2*amp):
-      // Fond ~16–24px, Milieu ~32–48px, Avant ~56–80px
-      const ampA = bp === 'desktop' ? 12 : bp === 'tablet' ? 11 : 8;  // total ≈ 24 / 22 / 16
-      const ampB = bp === 'desktop' ? 24 : bp === 'tablet' ? 20 : 16; // total ≈ 48 / 40 / 32
-      const ampC = bp === 'desktop' ? 40 : bp === 'tablet' ? 36 : 28; // total ≈ 80 / 72 / 56
+      // Dynamic amplitudes proportional to layer heights (half-range, total travel ≈ 2*amp)
+      const Ah = A.getBoundingClientRect().height || 1;
+      const Bh = B.getBoundingClientRect().height || 1;
+      const Ch = C.getBoundingClientRect().height || 1;
+      // Increase motion slightly for a snappier feel
+      // Back (hero): ~10–16% total travel of its height
+      const ampA = Math.round(Ah * (bp === 'mobile' ? 0.05 : bp === 'tablet' ? 0.07 : 0.08));
+      // Middle (landscape): ~45–68% total travel of its height
+      const ampB = Math.round(Bh * (bp === 'mobile' ? 0.26 : bp === 'tablet' ? 0.28 : 0.34));
+      // Front card: minimal (pinned feel) ~6–8% → slightly more, but still subtle
+      const ampC = Math.round(Ch * (bp === 'mobile' ? 0.032 : bp === 'tablet' ? 0.036 : 0.038));
       // Use smoothstep S-curve for all layers so the band visibly glides
       // between the slower background and faster vignette.
       // smoothstep: s = 3x^2 - 2x^3 (x in [0,1]) then center to [-1,1]
