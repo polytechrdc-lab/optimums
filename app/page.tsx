@@ -7,34 +7,33 @@ import KpiBand from "@/components/KpiBand";
 export default function HomePage() {
   return (
     <div>
-      {/* Hero section with background media placeholder and CTA */}
+      {/* Section Hero */}
       <Hero />
 
-      {/* Section avec la mÃƒÂªme hauteur que le hero */}
+      {/* Section de transition pleine hauteur */}
       <FullHeight />
 
-      {/* Where we operate Ã¢â‚¬â€ Helios-style interactive starter */}
-      {/* <WhereOperateHelios /> */}
-
-            <EditorialCards
-        headline="Building a More Connected World"
-        intro="Explore our priorities and how we partner with customers and communities."
+      {/* Construire un monde plus connecté (cartes éditoriales) */}
+      <EditorialCards
+        headline="Construire un monde plus connecté"
+        intro="Découvrez nos priorités et comment nous accompagnons nos clients et nos communautés."
         cards={[
-          { href: '#services', title: 'What We Do', desc: 'Infrastructure, engineering, and operations.', img: require('../image/hero/tel1.jpg'), alt: 'Telecom towers at sunset' },
-          { href: '#qhse', title: 'Responsibility', desc: 'Safety, quality and environment in action.', img: require('../image/hero/wh.jpg'), alt: 'Control room with monitoring screens' },
-          { href: '#carriere', title: 'Careers', desc: 'Grow with projects that matter.', img: require('../image/hero/team.jpg'), alt: 'Team collaborating on site plans' },
+          { href: '#services', title: 'Ce que nous faisons', desc: 'Infrastructures, ingénierie et opérations.', img: require('../image/hero/tel1.jpg'), alt: 'Tours télécom au coucher du soleil' },
+          { href: '#qhse', title: 'Responsabilité & QHSE', desc: 'Sécurité, qualité et environnement en action.', img: require('../image/hero/wh.jpg'), alt: 'Salle de contrôle et écrans de supervision' },
+          { href: '#carriere', title: 'Carrières', desc: 'Progressez au sein de projets qui comptent.', img: require('../image/hero/team.jpg'), alt: 'Équipe en réunion sur des plans' },
         ]}
       />
 
+      {/* Notre expérience (bandeau KPIs) */}
       <KpiBand
-        title="Our Experience"
-        intro="A credibility snapshot across our footprint and operations."
+        title="Notre expérience"
+        intro="Un aperçu chiffré de notre présence et de nos opérations."
         kpis={[
-          { value: 3200, suffix: '+', label: 'Tower sites under management' },
-          { value: 18, suffix: '+', label: 'Cities served' },
-          { value: 98, suffix: '%', approx: true, label: 'Average uptime' },
+          { value: 3200, suffix: '+', label: 'Sites tours gérés' },
+          { value: 18, suffix: '+', label: 'Villes desservies' },
+          { value: 98, suffix: '%', approx: true, label: 'Disponibilité moyenne' },
         ]}
-      />{/* Ancre pour le CTA RDC */}
+      />
     </div>
   );
 }
