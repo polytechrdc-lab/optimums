@@ -675,10 +675,6 @@ main { padding-top: var(--utility-h, 32px); }
 
 .ed-cta { display: inline-flex; align-items: center; gap: 8px; color: var(--primary); text-decoration: none; font-weight: 700; position: relative; }
 .ed-cta::after { content: ""; position: absolute; left: 0; bottom: -2px; width: 100%; height: 2px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 200ms var(--ease-base); }
-  padding: 20px 24px;
-  background: var(--s0);
-  border-left: 1px solid #E6EEF9; /* Optional divider */
-}
 /* Appearance animation (Helios-like): fade + slight slide, with stagger */
 @keyframes fadeSlideIn {
   from { opacity: 0; transform: translateY(8px); }
