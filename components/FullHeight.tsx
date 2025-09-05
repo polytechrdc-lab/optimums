@@ -1,79 +1,122 @@
 "use client";
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
-import img1 from '../image/body/1.webp';
-// Use bundled SVG as URL for inline <img>
+// Images pour la pile multi-calques
+import imgA from '../image/body/paysage.jpg'; // Paysage (milieu)
+import imgB from '../image/body/t2.jpg'; // Tour (petite, avant-plan)
+import imgC from '../image/body/satisfied-customer.jpg'; // Satisfied customer (grand fond, carré)
+// Badge décoratif
 import worldSvg from '../image/body/world-minified.svg?url';
 
 export default function FullHeight() {
   const sectionRef = useRef<HTMLElement>(null);
-  const parallaxRef = useRef<HTMLDivElement>(null);
-  const leftBandRef = useRef<HTMLDivElement>(null);
-  const bottomBandRef = useRef<HTMLDivElement>(null);
+  const stackRef = useRef<HTMLDivElement>(null);
+  const layerARef = useRef<HTMLDivElement>(null);
+  const layerBRef = useRef<HTMLDivElement>(null);
+  const layerCRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined' || typeof document === 'undefined') return;
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (mq.matches) return; // Respect reduced motion
+    const reduceMotion = () => mq.matches;
 
     const onScroll = () => {
       const holder = sectionRef.current;
-      const layer = parallaxRef.current;
-      const leftBand = leftBandRef.current;
-      const bottomBand = bottomBandRef.current;
-      if (!holder || !layer) return;
+      const stack = stackRef.current;
+      const A = layerARef.current;
+      const B = layerBRef.current;
+      const C = layerCRef.current;
+      if (!holder || !stack || !A || !B || !C) return;
 
       const rect = holder.getBoundingClientRect();
       const vh = window.innerHeight || 1;
       const vw = window.innerWidth || 1024;
 
-      // Progress of the section through the viewport (0 at enter, 1 at exit)
-      // Map rect.top from [vh .. -rect.height] -> progress [0..1]
+      // Progress through the section [0..1]
       const denom = vh + rect.height || 1;
       const raw = (vh - rect.top) / denom;
       const progress = Math.max(0, Math.min(1, raw));
 
-      // Move background slower than content. Stronger amplitude by breakpoint.
-      const MAX = vw < 768 ? 140 : vw < 1200 ? 200 : 260; // px
-      const parallaxY = (progress - 0.5) * 2 * MAX; // [-MAX .. +MAX]
+      // Base reposition (eat vertical gap, push right)
+      const baseShiftY = vw < 768 ? 12 : vw < 1200 ? 64 : 120;
+      const baseShiftX = vw < 768 ? 4 : vw < 1200 ? 16 : 40;
+      stack.style.transform = `translate(${baseShiftX}px, ${-baseShiftY}px)`;
 
-      // Base composition offsets (static reposition) with caps by breakpoint
-      const baseShiftY = vw < 768 ? 16 : vw < 1200 ? 72 : 120; // up by px
-      const baseShiftX = vw < 768 ? 6 : vw < 1200 ? 16 : 48; // right by px
-
-      // Apply combined transform (right + up + parallax)
-      const tx = baseShiftX;
-      const ty = -baseShiftY + parallaxY; // negative moves up
-      layer.style.transform = `translate(${tx}px, ${ty.toFixed(1)}px)`;
-
-      // Brand bands (left and bottom), fixed thickness per breakpoint
-      const thickness = vw < 768 ? 8 : vw < 1200 ? 10 : 12; // px
-      const radius = 12; // match wrapper radius
-      if (leftBand) {
-        leftBand.style.width = `${thickness}px`;
-        leftBand.style.height = `100%`;
-        leftBand.style.left = `0`;
-        leftBand.style.top = `0`;
-        leftBand.style.borderTopLeftRadius = `${radius}px`;
-        leftBand.style.borderBottomLeftRadius = `${radius}px`;
-        leftBand.style.borderTopRightRadius = `0px`;
-        leftBand.style.borderBottomRightRadius = `0px`;
-        // Share only the parallax (vertical) movement; keep static offset to reveal band
-        leftBand.style.transform = `translate(0px, ${parallaxY.toFixed(1)}px)`;
+      // Container dimensions per breakpoint (acceptance sizing)
+      const cont = stack.parentElement as HTMLDivElement;
+      const isMobile = vw < 768;
+      const isTablet = vw >= 768 && vw < 1280;
+      const isDesktop = vw >= 1280;
+      if (cont) {
+        cont.style.width = isDesktop ? '720px' : isTablet ? '600px' : '360px';
+        cont.style.height = isDesktop ? '560px' : isTablet ? '520px' : '420px';
+        cont.style.overflow = 'visible';
+        cont.style.borderRadius = '24px';
       }
-      if (bottomBand) {
-        bottomBand.style.height = `${thickness}px`;
-        bottomBand.style.width = `100%`;
-        bottomBand.style.left = `0`;
-        bottomBand.style.bottom = `0`;
-        bottomBand.style.borderBottomLeftRadius = `${radius}px`;
-        bottomBand.style.borderBottomRightRadius = `${radius}px`;
-        bottomBand.style.borderTopLeftRadius = `0px`;
-        bottomBand.style.borderTopRightRadius = `0px`;
-        // Share only the parallax (vertical) movement
-        bottomBand.style.transform = `translate(0px, ${parallaxY.toFixed(1)}px)`;
-      }
+
+      // Layer A — Fond (satisfied-customer) square inside container
+      const aContW = isDesktop ? 720 : isTablet ? 600 : 360;
+      const aContH = isDesktop ? 560 : isTablet ? 520 : 420;
+      const aSide = Math.min(aContH, aContW); // square side
+      const aW = aSide;
+      const aH = aSide;
+      Object.assign(A.style, {
+        width: `${aW}px`,
+        height: `${aH}px`,
+        left: '0',
+        top: '0',
+        right: 'auto',
+        bottom: 'auto',
+        borderRadius: '24px',
+        zIndex: '1',
+      });
+
+      // Layer B — Milieu (paysage), 50% width of A, shifted left by 30% of its width
+      const b2W = Math.round(aW * 0.5); // 50%
+      const b2H = Math.round(b2W * (2 / 3)); // ~3:2
+      const b2Top = isDesktop ? 64 : isTablet ? 48 : 24;
+      const b2Shift = Math.round(b2W * 0.3); // 30% left translate
+      Object.assign(B.style, {
+        width: `${b2W}px`,
+        height: `${b2H}px`,
+        left: '0',
+        top: `${b2Top}px`,
+        right: 'auto',
+        bottom: 'auto',
+        borderRadius: '24px',
+        zIndex: '2',
+        transform: `translate(${-b2Shift}px, 0)`
+      });
+
+      // Layer C — Petite (tour), ~28% of A on desktop; tablet 26%; mobile 36%
+      const cPct = isDesktop ? 0.28 : isTablet ? 0.26 : 0.36;
+      const cW = Math.round(aW * cPct);
+      const cH = isDesktop ? 280 : isTablet ? 220 : 180;
+      const cTop = isDesktop ? 16 : isTablet ? 12 : 8;
+      const cLeft = isDesktop ? 48 : isTablet ? 36 : 16;
+      const cBorder = isDesktop ? 8 : isTablet ? 6 : 4;
+      Object.assign(C.style, {
+        width: `${cW}px`,
+        height: `${cH}px`,
+        left: `${cLeft}px`,
+        top: `${cTop}px`,
+        right: 'auto',
+        bottom: 'auto',
+        borderRadius: '24px',
+        zIndex: '3',
+        border: `${cBorder}px solid #fff`,
+      });
+
+      // Parallax movements (translateY only). Disable on reduced motion.
+      const aMove = reduceMotion() ? 0 : (progress - 0.5) * 2 * (isDesktop ? 30 : isTablet ? 25 : 20);
+      const bMove = reduceMotion() ? 0 : (progress - 0.5) * 2 * (isDesktop ? 60 : isTablet ? 55 : 50);
+      const cMove = reduceMotion() ? 0 : (progress - 0.5) * 2 * (isDesktop ? 100 : isTablet ? 90 : 80);
+      // Apply translates, preserving X translate for B (left shift)
+      B.style.transform = `translate(${-b2Shift}px, ${bMove.toFixed(1)}px)`;
+      A.style.transform = `translate(0, ${aMove.toFixed(1)}px)`;
+      C.style.transform = `translate(0, ${cMove.toFixed(1)}px)`;
     };
+
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true } as any);
     window.addEventListener('resize', onScroll);
@@ -107,62 +150,55 @@ export default function FullHeight() {
             </span>
           </a>
         </div>
-        {/* Illustration — parallax image on the right */}
-        <div className="wm-illus" aria-hidden="true">
+        {/* Illustration — pile multi-calques avec parallaxe */}
+        <div className="wm-illus" aria-hidden={false}>
           <div
             className="wm-map-wrap"
             style={{
               position: 'relative',
-              width: '620px', // slightly wider to feel closer to the edge
+              width: '620px',
               maxWidth: '100%',
-              height: '460px', // slightly taller vertically
-              overflow: 'hidden',
-              borderRadius: 12,
-              marginRight: '-16px', // nudge closer to the container edge
+              height: '560px',
+              borderRadius: 24,
+              marginRight: '-16px',
+              overflow: 'visible',
             }}
           >
-            {/* Brand bands behind the image (decorative) */}
-            <div
-              ref={leftBandRef}
-              aria-hidden
-              style={{
-                position: 'absolute',
-                zIndex: 0,
-                background: 'var(--primary)',
-                pointerEvents: 'none',
-              }}
-            />
-            <div
-              ref={bottomBandRef}
-              aria-hidden
-              style={{
-                position: 'absolute',
-                zIndex: 0,
-                background: 'var(--primary)',
-                pointerEvents: 'none',
-              }}
-            />
-            {/* Background layer (parallax) */}
-            <div
-              ref={parallaxRef}
-              style={{
-                position: 'absolute',
-                inset: 0,
-                willChange: 'transform',
-                zIndex: 1,
-                filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.08))',
-              }}
-            >
-              <Image
-                src={img1}
-                alt=""
-                fill
-                sizes="(max-width: 1199px) 85vw, 620px"
-                priority
-                style={{ objectFit: 'cover', objectPosition: '80% 0%' }}
-              />
+            <div ref={stackRef} style={{ position: 'absolute', inset: 0 }}>
+              {/* Calque A — Fond (satisfied-customer) */}
+              <div ref={layerARef} style={{ position: 'absolute', zIndex: 1, overflow: 'hidden', borderRadius: 24 }}>
+                <Image
+                  src={imgC}
+                  alt=""
+                  fill
+                  sizes="(max-width: 1279px) 520px, 560px"
+                  priority
+                  style={{ objectFit: 'cover', objectPosition: '55% 50%' }}
+                />
+              </div>
+              {/* Calque B — Milieu (paysage) */}
+              <div ref={layerBRef} style={{ position: 'absolute', zIndex: 2, overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.06)', borderRadius: 24 }}>
+                <Image
+                  src={imgA}
+                  alt="Paysage"
+                  fill
+                  sizes="(max-width: 1279px) 300px, 360px"
+                  priority
+                  style={{ objectFit: 'cover', objectPosition: '50% 50%' }}
+                />
+              </div>
+              {/* Calque C — Avant-plan (tour, vignette) */}
+              <div ref={layerCRef} style={{ position: 'absolute', zIndex: 3, overflow: 'visible', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', borderRadius: 24 }}>
+                <Image
+                  src={imgB}
+                  alt="Tour de télécommunication"
+                  fill
+                  sizes="(max-width: 1279px) 156px, 200px"
+                  priority
+                  style={{ objectFit: 'cover', objectPosition: '50% 35%' }}
+                />
+              </div>
             </div>
-            {/* Overlay removed as requested */}
           </div>
         </div>
       </div>
