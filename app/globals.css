@@ -1200,7 +1200,7 @@ section .site-footer { display: none !important; }
   --kpi-stage-top: calc(var(--header-h, 72px) + var(--utility-h, 0px));
 }
 /* Stage fixed-in-view that holds KPI content */
-.kpi-stage { position: sticky; top: var(--kpi-stage-top); height: calc(100vh - var(--kpi-stage-top)); z-index: 2; background: #DDE5F0; display: grid; align-content: center; }
+.kpi-stage { position: sticky; top: calc(var(--header-h, 72px) + var(--utility-h, 0px)); height: calc(100vh - (var(--header-h, 72px) + var(--utility-h, 0px))); z-index: 1; background: #DDE5F0; display: grid; align-content: center; }
 .kpi-stage { --ks-obj: 75% 55%; }
 @media (min-width: 768px) and (max-width: 1279px) { .kpi-stage { --ks-obj: 70% 50%; } }
 @media (max-width: 767px) { .kpi-stage { --ks-obj: 50% 60%; } }
@@ -1256,6 +1256,8 @@ section .site-footer { display: none !important; }
 /* Remove previous sweep/height overrides (no animation at this step) */
 
 /* Section image sous "Notre expérience" */
-.experience-image { position: relative; height: clamp(80vh, 84vh, 90vh); overflow: hidden; background: transparent; z-index: 1; }
-.experience-media { position: absolute; inset: 0; overflow: hidden; }
+.experience-image { position: sticky; top: calc(var(--header-h, 72px) + var(--utility-h, 0px)); height: calc(100vh - (var(--header-h, 72px) + var(--utility-h, 0px))); overflow: hidden; background: transparent; z-index: 3; }
+.experience-media { position: absolute; inset: 0; overflow: hidden; z-index: 3; pointer-events: none; }
+.experience-content { position: relative; z-index: 4; }
+.experience-voile { position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: 0; }
 .kpi-band, .experience-image { margin: 0; }
