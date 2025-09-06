@@ -4,6 +4,9 @@ import Header from '@/components/Header';
 import UtilityBar from '@/components/UtilityBar';
 import Footer from '@/components/Footer';
 import SkipLink from '@/components/SkipLink';
+import dynamic from 'next/dynamic';
+
+const ClientScroll = dynamic(() => import('./ClientScroll'), { ssr: false });
 
 export const metadata: Metadata = {
   // Generic, non-branded metadata; replace in your project.
@@ -25,6 +28,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <UtilityBar />
         {/* New Header */}
         <Header />
+        {/* Smooth scroll initializer (Lenis) */}
+        <ClientScroll />
         <main id="main-content" role="main">
           {children}
         </main>

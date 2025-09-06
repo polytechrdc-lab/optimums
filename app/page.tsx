@@ -1,4 +1,5 @@
 ﻿import Hero from "@/components/Hero";
+import { MissionReveal, ImpactKPI, CasesCinemagraph, NetworkMap, ClientsTestimonials, SuperCTA } from "./components/optimums";
 import FullHeight from "@/components/FullHeight";
 import EditorialCards from "@/components/EditorialCards";
 import KpiBand from "@/components/KpiBand";
@@ -9,6 +10,14 @@ export default function HomePage() {
     <div>
       {/* Section Hero */}
       <Hero />
+
+      {/* Optimums premium mid-page sections */}
+      <MissionReveal />
+      <ImpactKPI />
+      <CasesCinemagraph />
+      <NetworkMap />
+      <ClientsTestimonials />
+      <SuperCTA />
 
       {/* Section de transition pleine hauteur */}
       <FullHeight />
