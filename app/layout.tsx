@@ -3,6 +3,7 @@ import './globals.css';
 import Header from '@/components/Header';
 import UtilityBar from '@/components/UtilityBar';
 import Footer from '@/components/Footer';
+import SkipLink from '@/components/SkipLink';
 
 export const metadata: Metadata = {
   // Generic, non-branded metadata; replace in your project.
@@ -19,9 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         {/* Skip to content for keyboard navigation */}
-        <a href="#main-content" style={{ position: 'absolute', left: -9999 }}>
-          Skip to content
-        </a>
+        <SkipLink />
         {/* Utility bar (sticky) */}
         <UtilityBar />
         {/* New Header */}
