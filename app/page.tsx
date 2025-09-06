@@ -26,17 +26,6 @@ export default function HomePage() {
       />
 
       <div className="parallax-band">
-        {/* Calque média sticky, sous le contenu (plein écran) */}
-        <div className="parallax-media" aria-hidden>
-          <Image
-            src={experienceImg}
-            alt=""
-            fill
-            sizes="100vw"
-            priority={false}
-            style={{ objectFit: 'cover', objectPosition: 'var(--pb-obj, 75% 55%)' }}
-          />
-        </div>
         {/* Notre expérience (bandeau KPIs) — le stage sticky est géré à l'intérieur du composant */}
         <KpiBand
           title="Notre expérience"
@@ -47,20 +36,6 @@ export default function HomePage() {
             { value: 3000, approx: true, suffix: "+", label: "Kilomètres de fibre optique déployés" },
           ]}
         />
-
-        {/* Image de contexte sous la section Notre expérience */}
-        <section className="experience-image" aria-label="Illustration d'expérience">
-          <div className="experience-media" aria-hidden>
-            <Image
-              src={experienceImg}
-              alt=""
-              fill
-              sizes="100vw"
-              priority={false}
-              style={{ objectFit: 'cover', objectPosition: '75% 55%' }}
-            />
-          </div>
-        </section>
       </div>
     </div>
   );
