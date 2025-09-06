@@ -1237,7 +1237,7 @@ section .site-footer { display: none !important; }
 .experience-media { position: absolute; inset: 0; overflow: hidden; }
 /* Overlay sombre en bas pour stabiliser le contraste près du raccord */
 /* Base overlay should be light (top → transparent by ~40–55%) for readability at rest */
-.experience-image::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+.experience-image::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
   background: linear-gradient(180deg,
     rgba(255,255,255,0.80) 0%,
     rgba(255,255,255,0.60) 20%,
