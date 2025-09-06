@@ -1,7 +1,5 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from 'react';
-import Image from 'next/image';
-import kpiBg from '../image/body/experience-bg.jpg';
 
 type Kpi = { value: number; prefix?: string; suffix?: string; approx?: boolean; label: string };
 
@@ -57,18 +55,6 @@ export default function KpiBand({
 
   return (
     <section ref={ref} className="kpi-band" aria-label={title}>
-      {/* Static background media (no animation) */}
-      <div className="kpi-bg" aria-hidden>
-        <Image
-          src={kpiBg}
-          alt=""
-          fill
-          sizes="100vw"
-          priority={false}
-          style={{ objectFit: 'cover', objectPosition: '75% 55%' }}
-        />
-        <div className="kpi-tint" />
-      </div>
       <div className="container kpi-wrap">
         <div className="kpi-content">
           <div className="kpi-head">

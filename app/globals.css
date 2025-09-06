@@ -1168,18 +1168,13 @@ section .site-footer { display: none !important; }
 @media (prefers-reduced-motion: reduce) { .edcard-img, .edcard-arrow svg { transition: none !important; } }
 
 /* KPI Band */
-.kpi-band { position: relative; background: transparent; color: var(--ink); overflow: hidden;
+.kpi-band { position: relative; background: #ffffff; color: var(--ink); overflow: hidden;
   /* Height target 84vh, tolerance 80–90vh */
   height: clamp(80vh, 84vh, 90vh);
   /* Horizontal paddings target: 24–40px via variable */
   --kpi-hpad: clamp(24px, 4vw, 40px);
 }
-/* Background media and top light overlay (static) */
-.kpi-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
-.kpi-tint { position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  /* Very light top gradient → transparent mid to ensure dark text readability */
-  background: linear-gradient(180deg, rgba(255,255,255,0.80) 0%, rgba(255,255,255,0.60) 20%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.00) 70%);
-}
+/* Background media removed (KPI-only) */
 .kpi-wrap { position: relative; z-index: 2; display: grid; gap: clamp(12px, 2vw, 20px); align-content: center; 
   /* Vertical paddings: 7–12% of viewport (ex: ~64–120px desktop) */
   padding-block: clamp(64px, 9vh, 120px);
