@@ -1174,6 +1174,15 @@ section .site-footer { display: none !important; }
   /* Horizontal paddings target: 24–40px via variable */
   --kpi-hpad: clamp(24px, 4vw, 40px);
 }
+/* Overlay clair en haut pour la lisibilité au repos (sous le contenu) */
+.kpi-band::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.80) 0%,
+    rgba(255,255,255,0.60) 20%,
+    rgba(255,255,255,0.28) 40%,
+    rgba(255,255,255,0.00) 55%
+  );
+}
 /* No background media layer in KPI section */
 .kpi-wrap { position: relative; z-index: 2; display: grid; gap: clamp(12px, 2vw, 20px); align-content: center; 
   /* Vertical paddings: 7–12% of viewport (ex: ~64–120px desktop) */
