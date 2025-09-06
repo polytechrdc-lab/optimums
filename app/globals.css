@@ -1189,7 +1189,7 @@ section .site-footer { display: none !important; }
 .kpi-head { display: grid; gap: 8px; margin-bottom: 1em; }
 .kpi-title { position: relative; margin: 0; font-weight: 800; font-size: clamp(30px, 3.6vw, 48px); line-height: 1.15; color: #0b1215; }
 .kpi-title::before { content: ""; position: absolute; left: -16px; top: 0.12em; bottom: 0.12em; width: 3px; background: var(--brandPrimary, var(--primary)); border-radius: 2px; }
-.kpi-intro { margin: 0; color: #E6EEF9; max-width: 70ch; opacity: 0.95; }
+.kpi-intro { margin: 0; color: #374151; max-width: 70ch; opacity: 1; }
 /* 12-col reference grid for values and labels, aligned to left axis */
 .kpi-values, .kpi-labels { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: clamp(16px, 3vw, 40px); }
 .kpi-content { max-width: none; }
@@ -1223,3 +1223,6 @@ section .site-footer { display: none !important; }
 
 /* Remove previous sweep/height overrides (no animation at this step) */
 
+/* Section image sous "Notre expérience" */
+.experience-image { position: relative; height: clamp(420px, 60vh, 720px); }
+.experience-media { position: absolute; inset: 0; overflow: hidden; }
