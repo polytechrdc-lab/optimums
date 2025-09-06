@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import kpiBg from '../image/body/experience-bg.jpg';
 
@@ -17,47 +17,80 @@ export default function KpiBand({
   countUp?: boolean;
 }) {
   const [active, setActive] = useState(false);
+  const [counts, setCounts] = useState<number[]>(() => kpis.map(() => 0));
+  const animatedRef = useRef(false);
   const prefersReduce = usePrefersReducedMotion();
   const ref = useRef<HTMLElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
   const bgMediaRef = useRef<HTMLDivElement>(null);
 
+  // Counter animation trigger at 40% visibility
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (prefersReduce || !countUp) { setActive(true); return; }
-    if (!('IntersectionObserver' in window)) { setActive(true); return; }
+    if (prefersReduce || !countUp) { setActive(true); setCounts(kpis.map(k => k.value)); return; }
+    if (!('IntersectionObserver' in window)) { setActive(true); setCounts(kpis.map(k => k.value)); return; }
     const io = new IntersectionObserver((ents) => {
-      if (ents[0].isIntersecting) { setActive(true); io.disconnect(); }
-    }, { threshold: 0 });
+      if (ents[0].isIntersecting && !animatedRef.current) {
+        animatedRef.current = true;
+        setActive(true);
+        // Animate counts 0 -> target over 1.2s ease-out
+        const start = performance.now();
+        const duration = 1200;
+        const targets = kpis.map(k => k.value);
+        const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+        const step = (now: number) => {
+          const t = Math.min(1, (now - start) / duration);
+          const e = easeOutCubic(t);
+          setCounts(targets.map(v => Math.round(v * e)));
+          if (t < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+        io.disconnect();
+      }
+    }, { threshold: 0.4 });
     io.observe(el);
     return () => io.disconnect();
-  }, [countUp, prefersReduce]);
+  }, [countUp, prefersReduce, kpis]);
 
-  // Parallaxe du fond – démarre dès le 1er pixel de scroll
+  // Parallaxe du fond (wrapper média uniquement) — rAF + scroll passif
   useEffect(() => {
     const section = ref.current;
     const media = bgMediaRef.current;
     if (!section || !media) return;
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const onScroll = () => {
-      if (reduce.matches) { media.style.transform = 'none'; return; }
+    let ticking = false;
+
+    const compute = () => {
+      ticking = false;
+      if (reduce.matches || window.innerWidth < 768) {
+        media.style.transform = 'none';
+        return;
+      }
       const r = section.getBoundingClientRect();
       const vh = window.innerHeight || 1;
       const denom = r.height + vh;
-      // Progress 0..1 through the section relative to viewport
+      // Normalized progress 0..1 based on section vs viewport; starts at 1st pixel
       const raw = (vh - r.top) / (denom || 1);
       const p = Math.max(0, Math.min(1, raw));
-      // Smoothstep easing for a gentle glide
-      const s = 3 * p * p - 2 * p * p * p;
+      // Ease-out for smoothness; also derive a centered signal for translate
+      const s = 1 - Math.pow(1 - p, 3); // easeOutCubic
       const centered = (s - 0.5) * 2; // [-1,1]
-      // Amplitude: ~14% of section height total travel
-      const amp = Math.round(r.height * 0.07);
-      const ty = centered * amp;
-      media.style.transform = `translateY(${ty.toFixed(1)}px)`;
+      const translateMax = 80; // px
+      const ty = centered * translateMax;
+      const scale = 1 + 0.05 * s; // 1.00 -> 1.05
+      media.style.transform = `translate3d(0, ${ty.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
     };
-    onScroll();
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(compute);
+      }
+    };
+
+    compute();
     window.addEventListener('scroll', onScroll, { passive: true } as any);
     window.addEventListener('resize', onScroll);
     return () => {
@@ -65,6 +98,8 @@ export default function KpiBand({
       window.removeEventListener('resize', onScroll);
     };
   }, []);
+
+  const numberFmt = useMemo(() => new Intl.NumberFormat('fr-FR'), []);
 
   return (
     <section ref={ref} className="kpi-band" aria-label={title}>
@@ -95,8 +130,9 @@ export default function KpiBand({
           <div className="kpi-grid">
           {kpis.map((k, i) => (
             <div className="kpi-item" key={i}>
-              <div className="kpi-value" aria-label={`${k.approx ? 'environ ' : ''}${k.prefix ?? ''}${k.value}${k.suffix ?? ''}`}>
-                {k.approx ? '∼' : ''}{k.prefix ?? ''}{active ? k.value : Math.max(0, Math.floor((k.value) * 0.82))}{k.suffix ?? ''}
+              <div className="kpi-value" data-prefix={k.prefix ?? ''} data-suffix={k.suffix ?? ''}
+                   aria-label={`${k.approx ? 'environ ' : ''}${k.prefix ?? ''}${k.value}${k.suffix ?? ''}`}>
+                {k.approx ? '∼' : ''}{k.prefix ?? ''}{numberFmt.format(active ? counts[i] : 0)}{k.suffix ?? ''}
               </div>
               <div className="kpi-label">{k.label}</div>
             </div>
