@@ -35,6 +35,8 @@ export default function HomePage() {
           { value: 3000, approx: true, suffix: "+", label: "Kilomètres de fibre optique déployés" },
         ]}
       />
+
+      {/* (supprimé) aucune section supplémentaire après "Notre expérience" */}
     </div>
   );
 }
