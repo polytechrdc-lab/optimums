@@ -1168,31 +1168,18 @@ section .site-footer { display: none !important; }
 @media (prefers-reduced-motion: reduce) { .edcard-img, .edcard-arrow svg { transition: none !important; } }
 
 /* KPI Band */
-.kpi-band { position: relative; background: #fff; color: var(--ink); overflow: clip; 
-  /* Default/mobile-first height; refined per breakpoint below */
-  min-height: 70vh; /* minimum absolu */
-  height: clamp(560px, 76vh, 800px); /* mobile cible ~72–80vh, sweet ~76vh, fallback px */
+.kpi-band { position: relative; background: transparent; color: var(--ink); overflow: hidden;
+  /* Height target 84vh, tolerance 80–90vh */
+  height: clamp(80vh, 84vh, 90vh);
   /* Horizontal paddings target: 24–40px via variable */
   --kpi-hpad: clamp(24px, 4vw, 40px);
 }
-@supports (height: 1dvh) {
-  .kpi-band { min-height: 70dvh; height: clamp(560px, 76dvh, 800px); }
+/* Background media and top light overlay (static) */
+.kpi-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.kpi-tint { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  /* Very light top gradient → transparent mid to ensure dark text readability */
+  background: linear-gradient(180deg, rgba(255,255,255,0.80) 0%, rgba(255,255,255,0.60) 20%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.00) 70%);
 }
-/* Tablette: 78–86vh (impact visuel), sweet spot ~82vh */
-@media (min-width: 768px) and (max-width: 1279px) {
-  .kpi-band { height: clamp(680px, 82vh, 860px); }
-  @supports (height: 1dvh) {
-    .kpi-band { height: clamp(680px, 82dvh, 860px); }
-  }
-}
-/* Desktop: 80–90vh (sweet 84vh) avec minimum absolu 70vh et fallback 720–900px */
-@media (min-width: 1280px) {
-  .kpi-band { height: clamp(720px, 84vh, 900px); }
-  @supports (height: 1dvh) {
-    .kpi-band { height: clamp(720px, 84dvh, 900px); }
-  }
-}
-/* background media & overlays removed for KPI-only display */
 .kpi-wrap { position: relative; z-index: 2; display: grid; gap: clamp(12px, 2vw, 20px); align-content: center; 
   /* Vertical paddings: 7–12% of viewport (ex: ~64–120px desktop) */
   padding-block: clamp(64px, 9vh, 120px);
@@ -1240,15 +1227,5 @@ section .site-footer { display: none !important; }
 .kpi-label { font-size: clamp(14px, 1.6vw, 18px); color: #475569; max-width: 60ch; opacity: 0.88; margin-top: 6px; }
 @media (prefers-reduced-motion: reduce) { .kpi-value { transition: none !important; } }
 
-/* Sweep overlay above content; moves upward with low opacity to simulate cover */
-.kpi-sweep { position: absolute; left: 0; right: 0; bottom: 0; height: 70%; z-index: 3; pointer-events: none;
-  background: linear-gradient(0deg, rgba(1,4,22,0.85) 0%, rgba(1,4,22,0) 70%);
-  opacity: 0; will-change: transform, opacity;
-}
-
-/* Slight dynamic opacity adjustment for KPI values during the sweep */
-.kpi-value { opacity: var(--kpiValueOpacity, 1); }
-
-/* Match height with the 'Relier les communautés...' section (.full-hero) */
-.kpi-band { height: auto; min-height: 140vh; }
+/* Remove previous sweep/height overrides (no animation at this step) */
 
