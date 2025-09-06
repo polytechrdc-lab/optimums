@@ -2,8 +2,7 @@
 import FullHeight from "@/components/FullHeight";
 import EditorialCards from "@/components/EditorialCards";
 import KpiBand from "@/components/KpiBand";
-import Image from "next/image";
-import towerSkyline from "../image/body/tower_skyline.png.webp";
+import ExperienceImage from "@/components/ExperienceImage";
 
 export default function HomePage() {
   return (
@@ -36,19 +35,7 @@ export default function HomePage() {
         ]}
       />
 
-      {/* Section image plein cadre sous "Notre expérience" */}
-      <section className="experience-image" aria-label="Illustration d'expérience">
-        <div className="experience-media" aria-hidden>
-          <Image
-            src={towerSkyline}
-            alt=""
-            fill
-            sizes="100vw"
-            priority={false}
-            style={{ objectFit: 'cover', objectPosition: '75% 55%' }}
-          />
-        </div>
-      </section>
+      <ExperienceImage />
 
       {/* (supprimé) aucune section supplémentaire après "Notre expérience" */}
     </div>
