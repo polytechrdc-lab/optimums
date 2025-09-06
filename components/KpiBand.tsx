@@ -90,7 +90,7 @@ export default function KpiBand({
 
       // Sweep overlay (above content): appears from bottom and climbs, subtle opacity
       if (sweep) {
-        const start = 0.02; // begin ~first 12px
+        const start = 0.00; // begin at first pixel
         const end = 0.80;  // reach near max before exit
         const t = Math.max(0, Math.min(1, (p - start) / Math.max(0.0001, end - start)));
         const sweepMax = translateMax * 0.6; // 60% of background travel
