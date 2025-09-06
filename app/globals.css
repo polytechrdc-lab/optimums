@@ -1224,5 +1224,5 @@ section .site-footer { display: none !important; }
 /* Remove previous sweep/height overrides (no animation at this step) */
 
 /* Section image sous "Notre expérience" */
-.experience-image { position: relative; height: clamp(420px, 60vh, 720px); }
+.experience-image { position: relative; height: clamp(80vh, 84vh, 90vh); overflow: hidden; }
 .experience-media { position: absolute; inset: 0; overflow: hidden; }
