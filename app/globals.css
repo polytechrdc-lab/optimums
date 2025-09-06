@@ -1257,7 +1257,7 @@ section .site-footer { display: none !important; }
 
 /* Section image sous "Notre expérience" */
 .experience-image { position: sticky; top: calc(var(--header-h, 72px) + var(--utility-h, 0px)); height: calc(100vh - (var(--header-h, 72px) + var(--utility-h, 0px))); overflow: hidden; background: transparent; z-index: 3; }
-.experience-media { position: absolute; inset: 0; overflow: hidden; z-index: 3; pointer-events: none; }
+.experience-media { position: absolute; inset: 0; overflow: hidden; z-index: 3; pointer-events: none; will-change: transform; }
 .experience-content { position: relative; z-index: 4; }
 .experience-voile { position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: 0; }
 .kpi-band, .experience-image { margin: 0; }
