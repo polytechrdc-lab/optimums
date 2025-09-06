@@ -1204,6 +1204,8 @@ section .site-footer { display: none !important; }
   /* Vertical paddings: 7–12% of viewport (ex: ~64–120px desktop) */
   padding-block: clamp(64px, 9vh, 120px);
 }
+/* Full-bleed KPI grid wrapper — occupy entire section width */
+.kpi-grid-bleed { width: 100vw; margin-left: calc(50% - 50vw); padding-left: var(--kpi-hpad); padding-right: var(--kpi-hpad); }
 /* Reserve 30–40% width as a safe text area on larger screens */
 .kpi-content { width: min(40%, 560px); }
 @media (max-width: 1279px) { .kpi-content { width: min(40%, 560px); } }
@@ -1220,4 +1222,7 @@ section .site-footer { display: none !important; }
 .kpi-value { font-weight: 900; font-size: clamp(28px, 6vw, 64px); line-height: 1.06; letter-spacing: -0.02em; text-wrap: balance; }
 .kpi-label { font-size: clamp(14px, 1.6vw, 18px); color: #E5E7EB; max-width: 60ch; opacity: 0.90; }
 @media (prefers-reduced-motion: reduce) { .kpi-value { transition: none !important; } }
+
+/* Match height with the 'Relier les communautés...' section (.full-hero) */
+.kpi-band { height: auto; min-height: 140vh; }
 

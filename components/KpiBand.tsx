@@ -91,7 +91,8 @@ export default function KpiBand({
             {intro && <p className="kpi-intro">{intro}</p>}
           </div>
         </div>
-        <div className="kpi-grid">
+        <div className="kpi-grid-bleed">
+          <div className="kpi-grid">
           {kpis.map((k, i) => (
             <div className="kpi-item" key={i}>
               <div className="kpi-value" aria-label={`${k.approx ? 'environ ' : ''}${k.prefix ?? ''}${k.value}${k.suffix ?? ''}`}>
@@ -100,6 +101,7 @@ export default function KpiBand({
               <div className="kpi-label">{k.label}</div>
             </div>
           ))}
+          </div>
         </div>
       </div>
     </section>
