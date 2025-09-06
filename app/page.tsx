@@ -26,6 +26,17 @@ export default function HomePage() {
       />
 
       <div className="parallax-band">
+        {/* Calque média sticky, sous le contenu (plein écran) */}
+        <div className="parallax-media" aria-hidden>
+          <Image
+            src={experienceImg}
+            alt=""
+            fill
+            sizes="100vw"
+            priority={false}
+            style={{ objectFit: 'cover', objectPosition: 'var(--pb-obj, 75% 55%)' }}
+          />
+        </div>
         {/* Notre expérience (bandeau KPIs) */}
         <KpiBand
           title="Notre expérience"
