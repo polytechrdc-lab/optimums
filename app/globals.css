@@ -1192,8 +1192,8 @@ section .site-footer { display: none !important; }
 
 /* KPI Band */
 .kpi-band { position: relative; background: #DDE5F0; color: var(--ink); overflow: hidden; z-index: 1;
-  /* Scrolling height for the section */
-  height: clamp(180vh, 200vh, 220vh);
+  /* Scrolling height for the section (halved) */
+  height: clamp(90vh, 100vh, 110vh);
   /* Horizontal paddings target: 24–40px via variable */
   --kpi-hpad: clamp(24px, 4vw, 40px);
   /* Stage top offset = header + utility heights */
