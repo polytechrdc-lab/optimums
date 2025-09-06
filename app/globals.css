@@ -1236,11 +1236,13 @@ section .site-footer { display: none !important; }
 .experience-image { position: relative; height: clamp(80vh, 84vh, 90vh); overflow: hidden; background: transparent; z-index: 1; }
 .experience-media { position: absolute; inset: 0; overflow: hidden; }
 /* Overlay sombre en bas pour stabiliser le contraste près du raccord */
+/* Base overlay should be light (top → transparent by ~40–55%) for readability at rest */
 .experience-image::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 2;
-  background: linear-gradient(0deg,
-    rgba(1,4,22,0.45) 0%,
-    rgba(1,4,22,0.20) 40%,
-    rgba(1,4,22,0.00) 60%
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.80) 0%,
+    rgba(255,255,255,0.60) 20%,
+    rgba(255,255,255,0.28) 40%,
+    rgba(255,255,255,0.00) 55%
   );
 }
 /* ParallaxBand wrapper */
