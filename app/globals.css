@@ -1169,21 +1169,15 @@ section .site-footer { display: none !important; }
 
 /* KPI Band */
 .kpi-band { position: relative; background: transparent; color: var(--ink); overflow: hidden; z-index: 1;
-  /* Height target 84vh, tolerance 80–90vh */
-  height: clamp(80vh, 84vh, 90vh);
+  /* Scrolling height for the section */
+  height: clamp(180vh, 200vh, 220vh);
   /* Horizontal paddings target: 24–40px via variable */
   --kpi-hpad: clamp(24px, 4vw, 40px);
+  /* Stage top offset = header + utility heights */
+  --kpi-stage-top: calc(var(--header-h, 72px) + var(--utility-h, 0px));
 }
-/* Overlay clair en haut pour la lisibilité au repos (sous le contenu) */
-.kpi-band::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
-  /* Lavis clair: #DDE5F0 très présent en haut → transparent vers ~40–55% */
-  background: linear-gradient(180deg,
-    rgba(221, 229, 240, 0.88) 0%,
-    rgba(221, 229, 240, 0.66) 20%,
-    rgba(221, 229, 240, 0.30) 40%,
-    rgba(221, 229, 240, 0.00) 55%
-  );
-}
+/* Stage fixed-in-view that holds KPI content */
+.kpi-stage { position: sticky; top: var(--kpi-stage-top); height: calc(100vh - var(--kpi-stage-top)); z-index: 2; background: #DDE5F0; display: grid; align-content: center; }
 /* No background media layer in KPI section */
 .kpi-wrap { position: relative; z-index: 2; display: grid; gap: clamp(12px, 2vw, 20px); align-content: center; 
   /* Vertical paddings: 7–12% of viewport (ex: ~64–120px desktop) */

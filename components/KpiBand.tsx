@@ -55,31 +55,33 @@ export default function KpiBand({
 
   return (
     <section ref={ref} className="kpi-band" aria-label={title}>
-      <div className="container kpi-wrap">
-        <div className="kpi-content">
-          <div className="kpi-head">
-            <h2 className="kpi-title">{title}</h2>
-            {intro && <p className="kpi-intro">{intro}</p>}
+      <div className="kpi-stage">
+        <div className="container kpi-wrap">
+          <div className="kpi-content">
+            <div className="kpi-head">
+              <h2 className="kpi-title">{title}</h2>
+              {intro && <p className="kpi-intro">{intro}</p>}
+            </div>
           </div>
-        </div>
-        {/* Values row (baseline-aligned) */}
-        <div className="kpi-values">
-          {kpis.slice(0,3).map((k, i) => (
-            <div className={`kpi-col kpi-col-${i+1}`} key={`v-${i}`}>
-              <div className="kpi-value" data-prefix={k.prefix ?? ''} data-suffix={k.suffix ?? ''}
-                   aria-label={`${k.approx ? 'environ ' : ''}${k.prefix ?? ''}${k.value}${k.suffix ?? ''}`}>
-                {k.approx ? '∼' : ''}{k.prefix ?? ''}{numberFmt.format(active ? counts[i] : 0)}{k.suffix ?? ''}
+          {/* Values row (baseline-aligned) */}
+          <div className="kpi-values">
+            {kpis.slice(0,3).map((k, i) => (
+              <div className={`kpi-col kpi-col-${i+1}`} key={`v-${i}`}>
+                <div className="kpi-value" data-prefix={k.prefix ?? ''} data-suffix={k.suffix ?? ''}
+                     aria-label={`${k.approx ? 'environ ' : ''}${k.prefix ?? ''}${k.value}${k.suffix ?? ''}`}>
+                  {k.approx ? '∼' : ''}{k.prefix ?? ''}{numberFmt.format(active ? counts[i] : 0)}{k.suffix ?? ''}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-        {/* Labels row */}
-        <div className="kpi-labels">
-          {kpis.slice(0,3).map((k, i) => (
-            <div className={`kpi-col kpi-col-${i+1}`} key={`l-${i}`}>
-              <div className="kpi-label">{k.label}</div>
-            </div>
-          ))}
+            ))}
+          </div>
+          {/* Labels row */}
+          <div className="kpi-labels">
+            {kpis.slice(0,3).map((k, i) => (
+              <div className={`kpi-col kpi-col-${i+1}`} key={`l-${i}`}>
+                <div className="kpi-label">{k.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -37,19 +37,16 @@ export default function HomePage() {
             style={{ objectFit: 'cover', objectPosition: 'var(--pb-obj, 75% 55%)' }}
           />
         </div>
-        {/* Conteneur sticky qui épingle le contenu */}
-        <div className="parallax-pin">
-          {/* Notre expérience (bandeau KPIs) */}
-          <KpiBand
-            title="Notre expérience"
-            intro="Un aperçu chiffré de notre empreinte et de nos opérations."
-            kpis={[
-              { value: 1200, approx: true, suffix: "+", label: "Sites tours en RDC" },
-              { value: 18, suffix: "+", label: "Villes desservies" },
-              { value: 3000, approx: true, suffix: "+", label: "Kilomètres de fibre optique déployés" },
-            ]}
-          />
-        </div>
+        {/* Notre expérience (bandeau KPIs) — le stage sticky est géré à l'intérieur du composant */}
+        <KpiBand
+          title="Notre expérience"
+          intro="Un aperçu chiffré de notre empreinte et de nos opérations."
+          kpis={[
+            { value: 1200, approx: true, suffix: "+", label: "Sites tours en RDC" },
+            { value: 18, suffix: "+", label: "Villes desservies" },
+            { value: 3000, approx: true, suffix: "+", label: "Kilomètres de fibre optique déployés" },
+          ]}
+        />
 
         {/* Image de contexte sous la section Notre expérience */}
         <section className="experience-image" aria-label="Illustration d'expérience">
