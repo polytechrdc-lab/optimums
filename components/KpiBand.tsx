@@ -56,8 +56,6 @@ export default function KpiBand({
   return (
     <section ref={ref} className="kpi-band" aria-label={title}>
       <div className="kpi-stage">
-        {/* Overlay clair (optionnel) du haut vers transparent pour lisibilité au repos */}
-        <div className="kpi-stage-tint" aria-hidden />
         <div className="container kpi-wrap">
           <div className="kpi-content">
             <div className="kpi-head">

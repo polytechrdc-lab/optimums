@@ -1182,14 +1182,7 @@ section .site-footer { display: none !important; }
 @media (min-width: 768px) and (max-width: 1279px) { .kpi-stage { --ks-obj: 70% 50%; } }
 @media (max-width: 767px) { .kpi-stage { --ks-obj: 50% 60%; } }
 .kpi-stage-media { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
-.kpi-stage-tint { position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background: linear-gradient(180deg,
-    rgba(221, 229, 240, 0.88) 0%,
-    rgba(221, 229, 240, 0.66) 20%,
-    rgba(221, 229, 240, 0.30) 40%,
-    rgba(221, 229, 240, 0.00) 55%
-  );
-}
+/* (removed) .kpi-stage-tint overlay */
 /* No background media layer in KPI section */
 .kpi-wrap { position: relative; z-index: 2; display: grid; gap: clamp(12px, 2vw, 20px); align-content: center; 
   /* Vertical paddings: 7–12% of viewport (ex: ~64–120px desktop) */
@@ -1242,16 +1235,10 @@ section .site-footer { display: none !important; }
 /* Section image sous "Notre expérience" */
 .experience-image { position: relative; height: clamp(80vh, 84vh, 90vh); overflow: hidden; background: transparent; z-index: 1; }
 .experience-media { position: absolute; inset: 0; overflow: hidden; }
+.kpi-band, .experience-image { margin: 0; }
 /* Overlay sombre en bas pour stabiliser le contraste près du raccord */
 /* Base overlay should be light (top → transparent by ~40–55%) for readability at rest */
-.experience-image::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
-  background: linear-gradient(180deg,
-    rgba(255,255,255,0.80) 0%,
-    rgba(255,255,255,0.60) 20%,
-    rgba(255,255,255,0.28) 40%,
-    rgba(255,255,255,0.00) 55%
-  );
-}
+/* (removed) experience-image overlay */
 /* ParallaxBand wrapper */
 /* (removed) .parallax-band and .parallax-media */
 /* Sticky pin container for KPI content */
