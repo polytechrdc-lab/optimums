@@ -1176,11 +1176,12 @@ section .site-footer { display: none !important; }
 }
 /* Overlay clair en haut pour la lisibilité au repos (sous le contenu) */
 .kpi-band::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  /* Lavis clair: #DDE5F0 très présent en haut → transparent vers ~40–55% */
   background: linear-gradient(180deg,
-    rgba(255,255,255,0.80) 0%,
-    rgba(255,255,255,0.60) 20%,
-    rgba(255,255,255,0.28) 40%,
-    rgba(255,255,255,0.00) 55%
+    rgba(221, 229, 240, 0.88) 0%,
+    rgba(221, 229, 240, 0.66) 20%,
+    rgba(221, 229, 240, 0.30) 40%,
+    rgba(221, 229, 240, 0.00) 55%
   );
 }
 /* No background media layer in KPI section */
