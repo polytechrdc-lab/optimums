@@ -1236,10 +1236,3 @@ section .site-footer { display: none !important; }
 .experience-image { position: relative; height: clamp(80vh, 84vh, 90vh); overflow: hidden; background: transparent; z-index: 1; }
 .experience-media { position: absolute; inset: 0; overflow: hidden; }
 .kpi-band, .experience-image { margin: 0; }
-/* Overlay sombre en bas pour stabiliser le contraste près du raccord */
-/* Base overlay should be light (top → transparent by ~40–55%) for readability at rest */
-/* (removed) experience-image overlay */
-/* ParallaxBand wrapper */
-/* (removed) .parallax-band and .parallax-media */
-/* Sticky pin container for KPI content */
-.parallax-pin { position: sticky; top: 0; height: 100vh; z-index: 2; background: #DDE5F0; }
