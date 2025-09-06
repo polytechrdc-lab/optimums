@@ -3,7 +3,7 @@ import FullHeight from "@/components/FullHeight";
 import EditorialCards from "@/components/EditorialCards";
 import KpiBand from "@/components/KpiBand";
 import Image from "next/image";
-import experienceImg from "../image/body/experience-bg.jpg";
+import towerSkyline from "../image/body/tower_skyline.png.webp";
 
 export default function HomePage() {
   return (
@@ -35,6 +35,20 @@ export default function HomePage() {
           { value: 3000, approx: true, suffix: "+", label: "Kilomètres de fibre optique déployés" },
         ]}
       />
+
+      {/* Section image plein cadre sous "Notre expérience" */}
+      <section className="experience-image" aria-label="Illustration d'expérience">
+        <div className="experience-media" aria-hidden>
+          <Image
+            src={towerSkyline}
+            alt=""
+            fill
+            sizes="100vw"
+            priority={false}
+            style={{ objectFit: 'cover', objectPosition: '75% 55%' }}
+          />
+        </div>
+      </section>
 
       {/* (supprimé) aucune section supplémentaire après "Notre expérience" */}
     </div>
