@@ -1191,7 +1191,7 @@ section .site-footer { display: none !important; }
 @media (prefers-reduced-motion: reduce) { .edcard-img, .edcard-arrow svg { transition: none !important; } }
 
 /* KPI Band */
-.kpi-band { position: relative; background: transparent; color: var(--ink); overflow: hidden; z-index: 1;
+.kpi-band { position: relative; background: #DDE5F0; color: var(--ink); overflow: hidden; z-index: 1;
   /* Scrolling height for the section */
   height: clamp(180vh, 200vh, 220vh);
   /* Horizontal paddings target: 24–40px via variable */
