@@ -1195,9 +1195,9 @@ section .site-footer { display: none !important; }
 .kpi-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
 .kpi-bg-media { position: absolute; inset: -10vh -2vw; will-change: transform; }
 .kpi-tint { position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  /* Black gradient overlay to guarantee AA on bright skies */
+  /* Base overlay for AA contrast (top->bottom 45%→65%) + slight brand tint */
   background:
-    linear-gradient(180deg, rgba(1,4,22,0.50) 0%, rgba(1,4,22,0.66) 100%),
+    linear-gradient(180deg, rgba(1,4,22,0.45) 0%, rgba(1,4,22,0.65) 100%),
     linear-gradient(0deg, color-mix(in srgb, var(--brandPrimary) 6%, transparent), transparent);
 }
 .kpi-wrap { position: relative; z-index: 2; display: grid; gap: clamp(12px, 2vw, 20px); align-content: center; 
@@ -1222,6 +1222,15 @@ section .site-footer { display: none !important; }
 .kpi-value { font-weight: 900; font-size: clamp(28px, 6vw, 64px); line-height: 1.06; letter-spacing: -0.02em; text-wrap: balance; }
 .kpi-label { font-size: clamp(14px, 1.6vw, 18px); color: #E5E7EB; max-width: 60ch; opacity: 0.90; }
 @media (prefers-reduced-motion: reduce) { .kpi-value { transition: none !important; } }
+
+/* Sweep overlay above content; moves upward with low opacity to simulate cover */
+.kpi-sweep { position: absolute; left: 0; right: 0; bottom: 0; height: 70%; z-index: 3; pointer-events: none;
+  background: linear-gradient(0deg, rgba(1,4,22,0.85) 0%, rgba(1,4,22,0) 70%);
+  opacity: 0; will-change: transform, opacity;
+}
+
+/* Slight dynamic opacity adjustment for KPI values during the sweep */
+.kpi-value { opacity: var(--kpiValueOpacity, 1); }
 
 /* Match height with the 'Relier les communautés...' section (.full-hero) */
 .kpi-band { height: auto; min-height: 140vh; }
