@@ -1168,20 +1168,18 @@ section .site-footer { display: none !important; }
 @media (prefers-reduced-motion: reduce) { .edcard-img, .edcard-arrow svg { transition: none !important; } }
 
 /* KPI Band */
-.kpi-band { position: relative; background: transparent; color: var(--ink); overflow: hidden;
+.kpi-band { position: relative; background: #ffffff; color: var(--ink); overflow: hidden;
   /* Height target 84vh, tolerance 80–90vh */
   height: clamp(80vh, 84vh, 90vh);
   /* Horizontal paddings target: 24–40px via variable */
   --kpi-hpad: clamp(24px, 4vw, 40px);
 }
-/* Calque média plein cadre sous le contenu */
-.kpi-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+/* No background media layer in KPI section */
 .kpi-wrap { position: relative; z-index: 2; display: grid; gap: clamp(12px, 2vw, 20px); align-content: center; 
   /* Vertical paddings: 7–12% of viewport (ex: ~64–120px desktop) */
   padding-block: clamp(64px, 9vh, 120px);
 }
-/* Full-bleed KPI grid wrapper — occupy entire section width */
-.kpi-grid-bleed { width: 100vw; margin-left: calc(50% - 50vw); padding-left: var(--kpi-hpad); padding-right: var(--kpi-hpad); }
+/* (removed) kpi-grid-bleed not used */
 /* Reserve 30–40% width as a safe text area on larger screens */
 .kpi-content { width: min(40%, 560px); }
 @media (max-width: 1279px) { .kpi-content { width: min(40%, 560px); } }
