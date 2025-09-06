@@ -23,14 +23,14 @@ export default function HomePage() {
         ]}
       />
 
-      {/* Notre experience (bandeau KPIs) */}
+      {/* Notre expérience (bandeau KPIs) */}
       <KpiBand
-        title="Notre experience"
-        intro="Un apercu chiffre de notre presence et de nos operations."
+        title="Notre expérience"
+        intro="Un aperçu chiffré de notre empreinte et de nos opérations."
         kpis={[
-          { value: 3200, suffix: "+", label: "Sites tours geres" },
+          { value: 1200, approx: true, suffix: "+", label: "Sites tours en RDC" },
           { value: 18, suffix: "+", label: "Villes desservies" },
-          { value: 98, suffix: "%", approx: true, label: "Disponibilite moyenne" },
+          { value: 3000, approx: true, suffix: "+", label: "Kilomètres de fibre optique déployés" },
         ]}
       />
     </div>

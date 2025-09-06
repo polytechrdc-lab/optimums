@@ -1168,16 +1168,56 @@ section .site-footer { display: none !important; }
 @media (prefers-reduced-motion: reduce) { .edcard-img, .edcard-arrow svg { transition: none !important; } }
 
 /* KPI Band */
-.kpi-band { background: #fff; color: var(--ink); }
-.kpi-wrap { padding: clamp(40px, 6vw, 72px) 0; display: grid; gap: 16px; }
-.kpi-head { display: grid; gap: 8px; }
-.kpi-title { margin: 0; font-weight: 800; font-size: clamp(28px, 4vw, 40px); line-height: 1.15; }
-.kpi-intro { margin: 0; color: #4B5563; max-width: 70ch; }
-.kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start; }
+.kpi-band { position: relative; background: transparent; color: #ffffff; overflow: clip; 
+  /* Default/mobile-first height; refined per breakpoint below */
+  min-height: 70vh; /* minimum absolu */
+  height: clamp(560px, 76vh, 800px); /* mobile cible ~72–80vh, sweet ~76vh, fallback px */
+  /* Horizontal paddings target: 24–40px via variable */
+  --kpi-hpad: clamp(24px, 4vw, 40px);
+}
+@supports (height: 1dvh) {
+  .kpi-band { min-height: 70dvh; height: clamp(560px, 76dvh, 800px); }
+}
+/* Tablette: 78–86vh (impact visuel), sweet spot ~82vh */
+@media (min-width: 768px) and (max-width: 1279px) {
+  .kpi-band { height: clamp(680px, 82vh, 860px); }
+  @supports (height: 1dvh) {
+    .kpi-band { height: clamp(680px, 82dvh, 860px); }
+  }
+}
+/* Desktop: 80–90vh (sweet 84vh) avec minimum absolu 70vh et fallback 720–900px */
+@media (min-width: 1280px) {
+  .kpi-band { height: clamp(720px, 84vh, 900px); }
+  @supports (height: 1dvh) {
+    .kpi-band { height: clamp(720px, 84dvh, 900px); }
+  }
+}
+.kpi-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.kpi-bg-media { position: absolute; inset: -10vh -2vw; will-change: transform; }
+.kpi-tint { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  /* Black gradient overlay to guarantee AA on bright skies */
+  background:
+    linear-gradient(180deg, rgba(1,4,22,0.50) 0%, rgba(1,4,22,0.66) 100%),
+    linear-gradient(0deg, color-mix(in srgb, var(--brandPrimary) 6%, transparent), transparent);
+}
+.kpi-wrap { position: relative; z-index: 2; display: grid; gap: clamp(12px, 2vw, 20px); align-content: center; 
+  /* Vertical paddings: 7–12% of viewport (ex: ~64–120px desktop) */
+  padding-block: clamp(64px, 9vh, 120px);
+}
+/* Reserve 30–40% width as a safe text area on larger screens */
+.kpi-content { width: min(40%, 560px); }
+@media (max-width: 1279px) { .kpi-content { width: min(40%, 560px); } }
+@media (max-width: 767px) { .kpi-content { width: 100%; } }
+/* Container sizing inside KPI band: max-width 1200–1320px and lateral paddings 24–40px */
+.kpi-band > .container { width: auto; max-width: 1320px; padding-left: var(--kpi-hpad); padding-right: var(--kpi-hpad); }
+.kpi-head { display: grid; gap: 8px; margin-bottom: clamp(16px, 2.5vw, 24px); }
+.kpi-title { margin: 0; font-weight: 800; font-size: clamp(26px, 3.6vw, 48px); line-height: 1.15; }
+.kpi-intro { margin: 0; color: #E6EEF9; max-width: 70ch; opacity: 0.95; }
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(16px, 3vw, 40px); align-items: start; }
 @media (max-width: 1199px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 767px) { .kpi-grid { grid-template-columns: 1fr; } }
+@media (max-width: 767px) { .kpi-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); } }
 .kpi-item { display: grid; gap: 6px; text-align: left; }
-.kpi-value { font-weight: 900; font-size: clamp(32px, 6vw, 56px); line-height: 1.1; letter-spacing: -0.02em; }
-.kpi-label { font-size: 14px; color: #374151; max-width: 60ch; }
+.kpi-value { font-weight: 900; font-size: clamp(28px, 6vw, 64px); line-height: 1.06; letter-spacing: -0.02em; text-wrap: balance; }
+.kpi-label { font-size: clamp(14px, 1.6vw, 18px); color: #E5E7EB; max-width: 60ch; opacity: 0.90; }
 @media (prefers-reduced-motion: reduce) { .kpi-value { transition: none !important; } }
 
