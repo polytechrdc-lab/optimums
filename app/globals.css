@@ -1253,14 +1253,6 @@ section .site-footer { display: none !important; }
   );
 }
 /* ParallaxBand wrapper */
-.parallax-band { position: relative; z-index: 0; height: clamp(180vh, 200vh, 220vh); background: #DDE5F0; }
-.parallax-band > *:not(.parallax-media) { position: relative; z-index: 1; }
-/* Sticky media layer at top of viewport */
-.parallax-media { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; pointer-events: none; z-index: 0; 
-  /* Responsive object-position via CSS var */
-  --pb-obj: 75% 55%;
-}
-@media (min-width: 768px) and (max-width: 1279px) { .parallax-media { --pb-obj: 70% 50%; } }
-@media (max-width: 767px) { .parallax-media { --pb-obj: 50% 60%; } }
+/* (removed) .parallax-band and .parallax-media */
 /* Sticky pin container for KPI content */
 .parallax-pin { position: sticky; top: 0; height: 100vh; z-index: 2; background: #DDE5F0; }

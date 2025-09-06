@@ -25,18 +25,16 @@ export default function HomePage() {
         ]}
       />
 
-      <div className="parallax-band">
-        {/* Notre expérience (bandeau KPIs) — le stage sticky est géré à l'intérieur du composant */}
-        <KpiBand
-          title="Notre expérience"
-          intro="Un aperçu chiffré de notre empreinte et de nos opérations."
-          kpis={[
-            { value: 1200, approx: true, suffix: "+", label: "Sites tours en RDC" },
-            { value: 18, suffix: "+", label: "Villes desservies" },
-            { value: 3000, approx: true, suffix: "+", label: "Kilomètres de fibre optique déployés" },
-          ]}
-        />
-      </div>
+      {/* Notre expérience (bandeau KPIs) — stage sticky interne au composant */}
+      <KpiBand
+        title="Notre expérience"
+        intro="Un aperçu chiffré de notre empreinte et de nos opérations."
+        kpis={[
+          { value: 1200, approx: true, suffix: "+", label: "Sites tours en RDC" },
+          { value: 18, suffix: "+", label: "Villes desservies" },
+          { value: 3000, approx: true, suffix: "+", label: "Kilomètres de fibre optique déployés" },
+        ]}
+      />
     </div>
   );
 }
