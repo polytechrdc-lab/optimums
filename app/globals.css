@@ -1168,7 +1168,7 @@ section .site-footer { display: none !important; }
 @media (prefers-reduced-motion: reduce) { .edcard-img, .edcard-arrow svg { transition: none !important; } }
 
 /* KPI Band */
-.kpi-band { position: relative; background: transparent; color: #ffffff; overflow: clip; 
+.kpi-band { position: relative; background: transparent; color: var(--ink); overflow: clip; 
   /* Default/mobile-first height; refined per breakpoint below */
   min-height: 70vh; /* minimum absolu */
   height: clamp(560px, 76vh, 800px); /* mobile cible ~72–80vh, sweet ~76vh, fallback px */
@@ -1195,10 +1195,10 @@ section .site-footer { display: none !important; }
 .kpi-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
 .kpi-bg-media { position: absolute; inset: -10vh -2vw; will-change: transform; }
 .kpi-tint { position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  /* Base overlay for AA contrast (top->bottom 45%→65%) + slight brand tint */
+  /* Light-at-top to keep dark text readable, fading to transparent */
   background:
-    linear-gradient(180deg, rgba(1,4,22,0.45) 0%, rgba(1,4,22,0.65) 100%),
-    linear-gradient(0deg, color-mix(in srgb, var(--brandPrimary) 6%, transparent), transparent);
+    linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.35) 24%, rgba(255,255,255,0.12) 52%, rgba(255,255,255,0.00) 80%),
+    linear-gradient(0deg, color-mix(in srgb, var(--brandPrimary) 4%, transparent), transparent);
 }
 .kpi-wrap { position: relative; z-index: 2; display: grid; gap: clamp(12px, 2vw, 20px); align-content: center; 
   /* Vertical paddings: 7–12% of viewport (ex: ~64–120px desktop) */
@@ -1212,15 +1212,39 @@ section .site-footer { display: none !important; }
 @media (max-width: 767px) { .kpi-content { width: 100%; } }
 /* Container sizing inside KPI band: max-width 1200–1320px and lateral paddings 24–40px */
 .kpi-band > .container { width: auto; max-width: 1320px; padding-left: var(--kpi-hpad); padding-right: var(--kpi-hpad); }
-.kpi-head { display: grid; gap: 8px; margin-bottom: clamp(16px, 2.5vw, 24px); }
-.kpi-title { margin: 0; font-weight: 800; font-size: clamp(26px, 3.6vw, 48px); line-height: 1.15; }
+.kpi-head { display: grid; gap: 8px; margin-bottom: 1em; }
+.kpi-title { position: relative; margin: 0; font-weight: 800; font-size: clamp(30px, 3.6vw, 48px); line-height: 1.15; color: #0b1215; }
+.kpi-title::before { content: ""; position: absolute; left: -16px; top: 0.12em; bottom: 0.12em; width: 3px; background: var(--brandPrimary, var(--primary)); border-radius: 2px; }
 .kpi-intro { margin: 0; color: #E6EEF9; max-width: 70ch; opacity: 0.95; }
-.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(16px, 3vw, 40px); align-items: start; }
-@media (max-width: 1199px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 767px) { .kpi-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); } }
-.kpi-item { display: grid; gap: 6px; text-align: left; }
-.kpi-value { font-weight: 900; font-size: clamp(28px, 6vw, 64px); line-height: 1.06; letter-spacing: -0.02em; text-wrap: balance; }
-.kpi-label { font-size: clamp(14px, 1.6vw, 18px); color: #E5E7EB; max-width: 60ch; opacity: 0.90; }
+/* 12-col reference grid for values and labels, aligned to left axis */
+.kpi-values, .kpi-labels { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: clamp(16px, 3vw, 40px); }
+.kpi-content { max-width: none; }
+/* Head spans columns 1-8 on desktop to leave space on the right visually */
+@media (min-width: 1280px) {
+  .kpi-content { display: grid; grid-template-columns: repeat(12, 1fr); }
+  .kpi-head { grid-column: 1 / span 8; }
+}
+/* Desktop placement: KPI1 1-4, KPI2 5-8, KPI3 9-12 */
+.kpi-col { display: block; }
+.kpi-values { align-items: baseline; }
+@media (min-width: 1280px) {
+  .kpi-col-1 { grid-column: 1 / span 4; }
+  .kpi-col-2 { grid-column: 5 / span 4; }
+  .kpi-col-3 { grid-column: 9 / span 4; }
+}
+/* Tablet: two columns; place 1/2 on first row, 3 spans full width below */
+@media (min-width: 768px) and (max-width: 1279px) {
+  .kpi-col-1 { grid-column: 1 / span 6; }
+  .kpi-col-2 { grid-column: 7 / span 6; }
+  .kpi-col-3 { grid-column: 1 / span 12; margin-top: 12px; }
+}
+/* Mobile: single column stack */
+@media (max-width: 767px) {
+  .kpi-col-1, .kpi-col-2, .kpi-col-3 { grid-column: 1 / -1; }
+}
+.kpi-item { display: contents; }
+.kpi-value { color: #111827; font-weight: 900; font-size: clamp(30px, 6vw, 64px); line-height: 1.06; letter-spacing: -0.02em; text-wrap: balance; }
+.kpi-label { font-size: clamp(14px, 1.6vw, 18px); color: #475569; max-width: 60ch; opacity: 0.88; margin-top: 6px; }
 @media (prefers-reduced-motion: reduce) { .kpi-value { transition: none !important; } }
 
 /* Sweep overlay above content; moves upward with low opacity to simulate cover */

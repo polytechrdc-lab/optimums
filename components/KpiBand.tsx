@@ -150,7 +150,7 @@ export default function KpiBand({
             placeholder="blur"
             quality={70}
             sizes="100vw"
-            style={{ objectFit: 'cover', objectPosition: '50% 50%' }}
+            style={{ objectFit: 'cover', objectPosition: '65% 50%' }}
           />
         </div>
         <div className="kpi-tint" />
@@ -162,18 +162,24 @@ export default function KpiBand({
             {intro && <p className="kpi-intro">{intro}</p>}
           </div>
         </div>
-        <div className="kpi-grid-bleed">
-          <div className="kpi-grid">
-          {kpis.map((k, i) => (
-            <div className="kpi-item" key={i}>
+        {/* Values row (baseline-aligned) */}
+        <div className="kpi-values">
+          {kpis.slice(0,3).map((k, i) => (
+            <div className={`kpi-col kpi-col-${i+1}`} key={`v-${i}`}>
               <div className="kpi-value" data-prefix={k.prefix ?? ''} data-suffix={k.suffix ?? ''}
                    aria-label={`${k.approx ? 'environ ' : ''}${k.prefix ?? ''}${k.value}${k.suffix ?? ''}`}>
                 {k.approx ? '∼' : ''}{k.prefix ?? ''}{numberFmt.format(active ? counts[i] : 0)}{k.suffix ?? ''}
               </div>
+            </div>
+          ))}
+        </div>
+        {/* Labels row */}
+        <div className="kpi-labels">
+          {kpis.slice(0,3).map((k, i) => (
+            <div className={`kpi-col kpi-col-${i+1}`} key={`l-${i}`}>
               <div className="kpi-label">{k.label}</div>
             </div>
           ))}
-          </div>
         </div>
       {/* Sweep overlay above content to create cover illusion */}
       <div ref={sweepRef} className="kpi-sweep" aria-hidden />
