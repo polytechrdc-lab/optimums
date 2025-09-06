@@ -1178,6 +1178,18 @@ section .site-footer { display: none !important; }
 }
 /* Stage fixed-in-view that holds KPI content */
 .kpi-stage { position: sticky; top: var(--kpi-stage-top); height: calc(100vh - var(--kpi-stage-top)); z-index: 2; background: #DDE5F0; display: grid; align-content: center; }
+.kpi-stage { --ks-obj: 75% 55%; }
+@media (min-width: 768px) and (max-width: 1279px) { .kpi-stage { --ks-obj: 70% 50%; } }
+@media (max-width: 767px) { .kpi-stage { --ks-obj: 50% 60%; } }
+.kpi-stage-media { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.kpi-stage-tint { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg,
+    rgba(221, 229, 240, 0.88) 0%,
+    rgba(221, 229, 240, 0.66) 20%,
+    rgba(221, 229, 240, 0.30) 40%,
+    rgba(221, 229, 240, 0.00) 55%
+  );
+}
 /* No background media layer in KPI section */
 .kpi-wrap { position: relative; z-index: 2; display: grid; gap: clamp(12px, 2vw, 20px); align-content: center; 
   /* Vertical paddings: 7–12% of viewport (ex: ~64–120px desktop) */
