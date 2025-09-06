@@ -1226,3 +1226,5 @@ section .site-footer { display: none !important; }
 /* Section image sous "Notre expérience" */
 .experience-image { position: relative; height: clamp(80vh, 84vh, 90vh); overflow: hidden; }
 .experience-media { position: absolute; inset: 0; overflow: hidden; }
+/* ParallaxBand wrapper */
+.parallax-band { position: relative; z-index: 0; }

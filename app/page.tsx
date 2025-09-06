@@ -25,30 +25,32 @@ export default function HomePage() {
         ]}
       />
 
-      {/* Notre expérience (bandeau KPIs) */}
-      <KpiBand
-        title="Notre expérience"
-        intro="Un aperçu chiffré de notre empreinte et de nos opérations."
-        kpis={[
-          { value: 1200, approx: true, suffix: "+", label: "Sites tours en RDC" },
-          { value: 18, suffix: "+", label: "Villes desservies" },
-          { value: 3000, approx: true, suffix: "+", label: "Kilomètres de fibre optique déployés" },
-        ]}
-      />
+      <div className="parallax-band">
+        {/* Notre expérience (bandeau KPIs) */}
+        <KpiBand
+          title="Notre expérience"
+          intro="Un aperçu chiffré de notre empreinte et de nos opérations."
+          kpis={[
+            { value: 1200, approx: true, suffix: "+", label: "Sites tours en RDC" },
+            { value: 18, suffix: "+", label: "Villes desservies" },
+            { value: 3000, approx: true, suffix: "+", label: "Kilomètres de fibre optique déployés" },
+          ]}
+        />
 
-      {/* Image de contexte sous la section Notre expérience */}
-      <section className="experience-image" aria-label="Illustration d'expérience">
-        <div className="experience-media" aria-hidden>
-          <Image
-            src={experienceImg}
-            alt=""
-            fill
-            sizes="100vw"
-            priority={false}
-            style={{ objectFit: 'cover', objectPosition: '75% 55%' }}
-          />
-        </div>
-      </section>
+        {/* Image de contexte sous la section Notre expérience */}
+        <section className="experience-image" aria-label="Illustration d'expérience">
+          <div className="experience-media" aria-hidden>
+            <Image
+              src={experienceImg}
+              alt=""
+              fill
+              sizes="100vw"
+              priority={false}
+              style={{ objectFit: 'cover', objectPosition: '75% 55%' }}
+            />
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
