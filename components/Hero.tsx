@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import type { StaticImageData } from 'next/image';
 // Use static imports so images always resolve, even outside /public
 import tel1 from '../image/hero/tel1.jpg';
 import wh from '../image/hero/wh.jpg';
@@ -18,7 +19,19 @@ export default function Hero() {
   const heroRef = useRef<HTMLElement>(null);
 
   // Carousel slides with per-slide messaging (adjust as needed)
-  const SLIDES = [
+  type Slide = {
+    src: StaticImageData;
+    eyebrow: string;
+    title: string;
+    deck: string;
+    primary: { label: string; href: string };
+    secondary: { label: string; href: string };
+    pos: string;
+    posMobile: string;
+    tintTop?: number; tintBottom?: number; dark60?: number; dark100?: number;
+    poly?: string; polyOpacity?: number; polyTopMix?: string; polyBottomWash?: string;
+  };
+  const SLIDES: Slide[] = [
     // Team (people first)
     {
       src: team,
@@ -75,7 +88,7 @@ export default function Hero() {
       poly: 'var(--gray)',
       polyOpacity: 0.94, polyTopMix: '80%', polyBottomWash: '8%',
     },
-  ] as const;
+  ];
   const SEGMENTS = SLIDES.length;
 
   // Reduced motion: stop autoplay transitions
