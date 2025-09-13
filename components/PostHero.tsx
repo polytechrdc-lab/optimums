@@ -69,6 +69,7 @@ export default function PostHero() {
         const mm = ScrollTrigger.matchMedia;
 
         // Shared elements
+        const backdrop = sec.querySelector(".ph-backdrop");
         const title = sec.querySelector(".ph-title");
         const deck = sec.querySelector(".ph-deck");
         const ctas = sec.querySelector(".ph-ctas");
@@ -76,18 +77,17 @@ export default function PostHero() {
         const l2 = sec.querySelector(".ph-layer-2");
         const badge = sec.querySelector(".ph-badge");
 
-        gsap.set([title, deck, ctas, badge], { opacity: 0, y: 32 });
+        // Keep text static: no reveal animations
         gsap.set([l1, l2], { willChange: "transform", rotate: 0.001 });
+        if (backdrop) gsap.set(backdrop, { willChange: "transform", rotate: 0.001, yPercent: 0, scale: 1 });
         gsap.set(l1, { transformOrigin: "50% 50%" });
         gsap.set([l1, l2], { opacity: 1 });
 
         const base = {
           trigger: sec,
           start: "top top",
-          end: "+=300%",
-          scrub: 1.2,
-          pin: true,
-          anticipatePin: 1,
+          end: "+=120%",
+          scrub: true,
         } as const;
 
         // Timeline for text reveals and parallax layers
@@ -96,47 +96,27 @@ export default function PostHero() {
           "(min-width: 1024px)": () => {
             const tl = gsap.timeline({ scrollTrigger: { ...base } });
 
-            // Intro text reveal
-            tl.to(title, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.05)
-              .to(deck, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.15)
-              .to(badge, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.20)
-              .to(ctas, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.30);
-
             // Parallax motion + top image zoom
+            if (backdrop) tl.to(backdrop, { yPercent: -8, ease: "none" }, 0);
             tl.to(l1, { yPercent: -15, ease: "none" }, 0)
-              .to(l2, { yPercent: -36, scale: 1.06, ease: "none" }, 0)
-              .fromTo(l1, { scale: 1.0 }, { scale: 1.32, ease: "none" }, 0);
-
-            // Midway mask/reveal style accent sweep
-            tl.fromTo(".ph-accent", { clipPath: "inset(0 100% 0 0 round 14px)" },
-              { clipPath: "inset(0 0% 0 0 round 14px)", ease: "power2.out", duration: 0.8 }, 0.35);
-
-            // Outro: gently ease out text to mimic kinetic cadence
-            tl.to([title, deck, badge, ctas], { y: -24, opacity: 0.92, duration: 0.6, ease: "power1.out" }, 0.65);
+              .to(l2, { yPercent: -36, ease: "none" }, 0);
+            // Text remains static; no accent sweep/outro animations
           },
 
           // Tablet
           "(min-width: 640px) and (max-width: 1023px)": () => {
-            const tl = gsap.timeline({ scrollTrigger: { ...base, end: "+=260%" } });
-            tl.to(title, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.05)
-              .to(deck, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.12)
-              .to(ctas, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.2)
+            const tl = gsap.timeline({ scrollTrigger: { ...base, end: "+=100%" } });
+            tl.to(backdrop, { yPercent: -6, ease: "none" }, 0)
               .to(l1, { yPercent: -14, ease: "none" }, 0)
-              .to(l2, { yPercent: -32, scale: 1.05, ease: "none" }, 0)
-              .fromTo(l1, { scale: 1.0 }, { scale: 1.24, ease: "none" }, 0)
-              .fromTo(".ph-accent", { clipPath: "inset(0 100% 0 0 round 12px)" }, { clipPath: "inset(0 0% 0 0 round 12px)", duration: 0.7, ease: "power2.out" }, 0.3);
+              .to(l2, { yPercent: -32, ease: "none" }, 0);
           },
 
           // Mobile
           "(max-width: 639px)": () => {
-            const tl = gsap.timeline({ scrollTrigger: { ...base, end: "+=220%" } });
-            tl.to(title, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 0.05)
-              .to(deck, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 0.12)
-              .to(ctas, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 0.18)
+            const tl = gsap.timeline({ scrollTrigger: { ...base, end: "+=90%" } });
+            tl.to(backdrop, { yPercent: -4, ease: "none" }, 0)
               .to(l1, { yPercent: -10, ease: "none" }, 0)
-              .to(l2, { yPercent: -24, scale: 1.04, ease: "none" }, 0)
-              .fromTo(l1, { scale: 1.0 }, { scale: 1.18, ease: "none" }, 0)
-              .fromTo(".ph-accent", { clipPath: "inset(0 100% 0 0 round 10px)" }, { clipPath: "inset(0 0% 0 0 round 10px)", duration: 0.6, ease: "power2.out" }, 0.26);
+              .to(l2, { yPercent: -24, ease: "none" }, 0);
           },
         });
       }, sectionRef);
@@ -156,6 +136,7 @@ export default function PostHero() {
       className="post-hero"
       ref={sectionRef}
     >
+      <div className="ph-backdrop backdrop-radial" aria-hidden="true" />
       <div className="container ph-grid">
         <div className="ph-copy" data-anim>
           <div className="ph-badge" aria-hidden="true">Depuis 2009</div>
