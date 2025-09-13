@@ -1,34 +1,17 @@
 "use client";
 import { useEffect } from "react";
-
-type GSAPType = any;
-
-function waitForGsap(timeoutMs = 1200): Promise<{ gsap: GSAPType; ScrollTrigger: any } | null> {
-  return new Promise((resolve) => {
-    const start = Date.now();
-    const tick = () => {
-      const gsap = (window as any).gsap;
-      const ScrollTrigger = (window as any).ScrollTrigger;
-      if (gsap && ScrollTrigger) return resolve({ gsap, ScrollTrigger });
-      if (Date.now() - start > timeoutMs) return resolve(null);
-      requestAnimationFrame(tick);
-    };
-    tick();
-  });
-}
+import { gsapCore, isReducedMotion } from "@/lib/gsap";
 
 export default function InterSectionParallax() {
   useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (mq.matches) return;
+    if (isReducedMotion()) return;
 
     let ctx: any | undefined;
     let killed = false;
 
     (async () => {
-      const found = await waitForGsap();
-      if (!found || killed) return;
-      const { gsap } = found;
+      const { gsap } = await gsapCore();
+      if (!gsap || killed) return;
 
       const whSection = document.querySelector<HTMLElement>('#welcome-health');
       const rlSection = document.querySelector<HTMLElement>('#realisations');

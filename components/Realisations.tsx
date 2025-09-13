@@ -4,19 +4,7 @@ import Image from "next/image";
 import r1 from "../image/body/1.webp";
 import r2 from "../image/body/2.jpg";
 import r3 from "../image/body/3.webp";
-
-type GSAPType = any;
-
-async function loadGsap(): Promise<{ gsap: GSAPType | null; ScrollTrigger: any | null }> {
-  try {
-    const g = await import("gsap");
-    const st = await import("gsap/ScrollTrigger");
-    (g as any).default?.registerPlugin(st.ScrollTrigger);
-    return { gsap: (g as any).default ?? (g as any), ScrollTrigger: st.ScrollTrigger };
-  } catch {
-    return { gsap: null, ScrollTrigger: null };
-  }
-}
+import { gsapCore, isReducedMotion } from "@/lib/gsap";
 
 const KPIS = [
   { label: "Sites déployés", value: "1 200+" },
@@ -76,24 +64,23 @@ export default function Realisations() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (mq.matches) return;
-    let ctx: any; let st: any; let killed = false;
+    if (isReducedMotion()) return;
+    let ctx: any; let killed = false;
     (async () => {
-      const { gsap, ScrollTrigger } = await loadGsap();
+      const { gsap, ScrollTrigger } = await gsapCore();
       if (!gsap || !ScrollTrigger || killed) return;
       const root = sectionRef.current!;
       ctx = gsap.context(() => {
-        const heroEls = root.querySelectorAll('.rl-hero .reveal');
-        const kpiEls = root.querySelectorAll('.rl-kpi');
-        const pillarEls = root.querySelectorAll('.rl-pillar');
-        const cases = root.querySelectorAll('.rl-case');
-        const hexEls = root.querySelectorAll('.rl-hex .hex');
-        const finalEls = root.querySelectorAll('.rl-final .reveal');
-        const overlineEl = root.querySelector('.rl-overline');
-        const kpiValues = root.querySelectorAll('.rl-kpi-value');
-        const kpiLabels = root.querySelectorAll('.rl-kpi-label');
-        const pillIcons = root.querySelectorAll('.rl-pill-icon');
+        const heroEls = root.querySelectorAll('[data-animate="hero"], .rl-hero .reveal');
+        const kpiEls = root.querySelectorAll('[data-animate="kpi"], .rl-kpi');
+        const pillarEls = root.querySelectorAll('[data-animate="pillar"], .rl-pillar');
+        const cases = root.querySelectorAll('[data-animate="case"], .rl-case');
+        const hexEls = root.querySelectorAll('[data-animate="hex"], .rl-hex .hex');
+        const finalEls = root.querySelectorAll('[data-animate="final"], .rl-final .reveal');
+        const overlineEl = root.querySelector('[data-animate="overline"], .rl-overline');
+        const kpiValues = root.querySelectorAll('[data-animate="kpi-value"], .rl-kpi-value');
+        const kpiLabels = root.querySelectorAll('[data-animate="kpi-label"], .rl-kpi-label');
+        const pillIcons = root.querySelectorAll('[data-animate="pillar-icon"], .rl-pill-icon');
 
         gsap.set(heroEls, { opacity: 0, y: 16 });
         if (overlineEl) gsap.set(overlineEl, { x: -8 });
@@ -108,7 +95,7 @@ export default function Realisations() {
         gsap.to(finalEls, { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out', stagger: 0.08, scrollTrigger: { trigger: root.querySelector('.rl-final'), start: 'top 85%' } });
 
         // Case image entrance (separate from general reveal)
-        const caseImgs = root.querySelectorAll<HTMLImageElement>('.rl-case-img');
+        const caseImgs = root.querySelectorAll<HTMLElement>('[data-animate="case-img"]');
         caseImgs.forEach((img) => {
           gsap.fromTo(img, { opacity: 0, y: 16, scale: 1.02 }, {
             opacity: 1,
@@ -131,30 +118,72 @@ export default function Realisations() {
             const heroImg = root.querySelector('.rl-hero-visual img');
             if (heroImg) gsap.to(heroImg, { y: -24, ease: 'none', scrollTrigger: { trigger: root.querySelector('.rl-hero')!, start: 'top bottom', end: 'bottom top', scrub: 0.3 } });
 
-            const hexCenter = root.querySelectorAll('.hex-center .hex-img');
+            const hexCenter = root.querySelectorAll('[data-animate="hex"][data-hex-role="center"] .hex-img');
             if (hexCenter.length) {
               gsap.to(hexCenter, { y: -30, ease: 'none', scrollTrigger: { trigger: root.querySelector('.rl-hex')!, start: 'top bottom', end: 'bottom top', scrub: 0.3 } });
               gsap.to(hexCenter, { scale: 1.015, duration: 4.8, ease: 'sine.inOut', yoyo: true, repeat: -1, transformOrigin: '50% 50%', overwrite: false });
               gsap.to(hexCenter, { rotation: 0.6, ease: 'none', transformOrigin: '50% 50%', scrollTrigger: { trigger: root.querySelector('.rl-hex')!, start: 'top bottom', end: 'bottom top', scrub: 0.3 } });
             }
-            const hexSides = root.querySelectorAll('.hex-side .hex-img');
+            const hexSides = root.querySelectorAll('[data-animate="hex"][data-hex-role="side"] .hex-img');
             if (hexSides.length) {
               gsap.to(hexSides, { y: -18, ease: 'none', scrollTrigger: { trigger: root.querySelector('.rl-hex')!, start: 'top bottom', end: 'bottom top', scrub: 0.3 } });
               gsap.to(hexSides, { scale: 1.01, duration: 5.0, ease: 'sine.inOut', yoyo: true, repeat: -1, transformOrigin: '50% 50%', overwrite: false });
               gsap.to(hexSides, { rotation: -0.4, ease: 'none', transformOrigin: '50% 50%', scrollTrigger: { trigger: root.querySelector('.rl-hex')!, start: 'top bottom', end: 'bottom top', scrub: 0.3 } });
             }
+            // Will-change discipline for hex images during the hex band viewport range
+            const hexImgs: Element[] = [...Array.from(hexCenter), ...Array.from(hexSides)];
+            if (hexImgs.length) {
+              ScrollTrigger.create({
+                trigger: root.querySelector('.rl-hex')!,
+                start: 'top bottom',
+                end: 'bottom top',
+                onEnter: () => gsap.set(hexImgs, { willChange: 'transform' }),
+                onLeave: () => gsap.set(hexImgs, { willChange: 'auto' }),
+                onEnterBack: () => gsap.set(hexImgs, { willChange: 'transform' }),
+                onLeaveBack: () => gsap.set(hexImgs, { willChange: 'auto' }),
+              });
+            }
+
+            // Per-case parallax with per-item will-change toggles
             caseImgs.forEach((img) => {
-              gsap.to(img, { y: -24, ease: 'none', scrollTrigger: { trigger: (img.closest('.rl-case') as Element) ?? img, start: 'top bottom', end: 'bottom top', scrub: 0.3 } });
+              const trig = (img.closest('.rl-case') as Element) ?? img;
+              gsap.to(img, { y: -24, ease: 'none', scrollTrigger: { trigger: trig, start: 'top bottom', end: 'bottom top', scrub: 0.3, onEnter: () => gsap.set(img, { willChange: 'transform' }), onLeave: () => gsap.set(img, { willChange: 'auto' }), onEnterBack: () => gsap.set(img, { willChange: 'transform' }), onLeaveBack: () => gsap.set(img, { willChange: 'auto' }) } });
             });
           }
         });
 
         // KPI slight parallax between values and labels (all viewports)
         if (kpiValues.length) {
-          gsap.to(kpiValues, { y: -6, ease: 'none', scrollTrigger: { trigger: root.querySelector('.rl-kpis')!, start: 'top bottom', end: 'bottom top', scrub: 0.2 } });
+          gsap.to(kpiValues, {
+            y: -6,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: root.querySelector('.rl-kpis')!,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 0.2,
+              onEnter: () => gsap.set(kpiValues, { willChange: 'transform' }),
+              onLeave: () => gsap.set(kpiValues, { willChange: 'auto' }),
+              onEnterBack: () => gsap.set(kpiValues, { willChange: 'transform' }),
+              onLeaveBack: () => gsap.set(kpiValues, { willChange: 'auto' }),
+            }
+          });
         }
         if (kpiLabels.length) {
-          gsap.to(kpiLabels, { y: -3, ease: 'none', scrollTrigger: { trigger: root.querySelector('.rl-kpis')!, start: 'top bottom', end: 'bottom top', scrub: 0.2 } });
+          gsap.to(kpiLabels, {
+            y: -3,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: root.querySelector('.rl-kpis')!,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 0.2,
+              onEnter: () => gsap.set(kpiLabels, { willChange: 'transform' }),
+              onLeave: () => gsap.set(kpiLabels, { willChange: 'auto' }),
+              onEnterBack: () => gsap.set(kpiLabels, { willChange: 'transform' }),
+              onLeaveBack: () => gsap.set(kpiLabels, { willChange: 'auto' }),
+            }
+          });
         }
 
         // Pillar icons subtle float on scroll
@@ -192,7 +221,7 @@ export default function Realisations() {
         });
       }, sectionRef);
     })();
-    return () => { killed = true; try { st?.kill(); } catch {} try { ctx?.revert(); } catch {} };
+    return () => { killed = true; try { ctx?.revert(); } catch {} };
   }, []);
 
   return (
@@ -202,14 +231,14 @@ export default function Realisations() {
         <div className="rl-hero rl-section">
           <div className="rl-hero-grid-12">
             <div className="rl-hero-col rl-hero-left">
-              <div className="rl-overline reveal" aria-hidden="true">NOS RÉALISATIONS</div>
-              <h2 className="rl-hero-title reveal">Des réalisations solides, livrées à l’heure.</h2>
-              <div className="rl-hero-ctas reveal">
+              <div className="rl-overline reveal" aria-hidden="true" data-animate="overline">NOS RÉALISATIONS</div>
+              <h2 className="rl-hero-title reveal" data-animate="hero">Des réalisations solides, livrées à l’heure.</h2>
+              <div className="rl-hero-ctas reveal" data-animate="hero">
                 <a href="#contact" className="rl-cta-outline">Parler à un expert</a>
               </div>
             </div>
             <div className="rl-hero-col rl-hero-right">
-              <p className="rl-hero-lead reveal">Des projets télécoms menés de bout en bout — ingénierie, déploiement, énergie et opérations 24/7 — documentés, sourcés et vérifiés sur le terrain. Des résultats tangibles à la clé : délais tenus, SLA ≥ 99,9 %, coûts optimisés (CapEx/OpEx) et qualité auditable.</p>
+              <p className="rl-hero-lead reveal" data-animate="hero">Des projets télécoms menés de bout en bout — ingénierie, déploiement, énergie et opérations 24/7 — documentés, sourcés et vérifiés sur le terrain. Des résultats tangibles à la clé : délais tenus, SLA ≥ 99,9 %, coûts optimisés (CapEx/OpEx) et qualité auditable.</p>
             </div>
           </div>
         </div>
@@ -218,12 +247,12 @@ export default function Realisations() {
         <div className="rl-kpis rl-section">
           <ul className="rl-kpi-list" aria-label="Chiffres clés">
             {KPIS.map((k, i) => (
-              <li key={i} className="rl-kpi">
-                <div className="rl-kpi-value" aria-label={k.value}>
+              <li key={i} className="rl-kpi" data-animate="kpi">
+                <div className="rl-kpi-value" aria-label={k.value} data-animate="kpi-value">
                   <span className="rl-kpi-odometer" aria-hidden="true" data-final={k.value}>{k.value}</span>
                   <span className="sr-only">{k.value}</span>
                 </div>
-                <div className="rl-kpi-label">{k.label}</div>
+                <div className="rl-kpi-label" data-animate="kpi-label">{k.label}</div>
               </li>
             ))}
           </ul>
@@ -233,9 +262,9 @@ export default function Realisations() {
         <div className="rl-pillars rl-section">
           <div className="rl-pillar-grid">
             {PILLARS.map((p, i) => (
-              <article key={i} className="rl-pillar">
+              <article key={i} className="rl-pillar" data-animate="pillar">
                 <div className="rl-pill-head">
-                  <span className="rl-pill-icon" aria-hidden="true">{p.icon}</span>
+                  <span className="rl-pill-icon" aria-hidden="true" data-animate="pillar-icon">{p.icon}</span>
                   <h3 className="rl-pillar-title">{p.title}</h3>
                 </div>
                 <ul className="rl-pillar-points">
@@ -249,13 +278,13 @@ export default function Realisations() {
         {/* Hex imagery band */}
         <div className="rl-hex rl-section" aria-hidden="true">
           <div className="rl-hex-band">
-            <div className="hex hex-side">
+            <div className="hex hex-side" data-animate="hex" data-hex-role="side">
               <Image src={r3} alt="" className="hex-img" sizes="(min-width: 1024px) 320px, 40vw" loading="lazy" />
             </div>
-            <div className="hex hex-center">
+            <div className="hex hex-center" data-animate="hex" data-hex-role="center">
               <Image src={r1} alt="" className="hex-img" sizes="(min-width: 1024px) 420px, 56vw" loading="lazy" />
             </div>
-            <div className="hex hex-side">
+            <div className="hex hex-side" data-animate="hex" data-hex-role="side">
               <Image src={r2} alt="" className="hex-img" sizes="(min-width: 1024px) 320px, 40vw" loading="lazy" />
             </div>
           </div>
@@ -264,8 +293,8 @@ export default function Realisations() {
         {/* Featured cases */}
         <div className="rl-cases rl-section">
           {CASES.map((c, idx) => (
-            <article key={idx} className={`rl-case rl-case-split ${idx % 2 === 0 ? 'rl-case-a' : 'rl-case-b'}`}>
-              <div className="rl-case-media"><Image src={c.image} alt={c.title} className="rl-case-img" sizes="(min-width: 1024px) 600px, 90vw" loading="lazy" /></div>
+            <article key={idx} className={`rl-case rl-case-split ${idx % 2 === 0 ? 'rl-case-a' : 'rl-case-b'}`} data-animate="case">
+              <div className="rl-case-media"><Image src={c.image} alt={c.title} className="rl-case-img" sizes="(min-width: 1024px) 600px, 90vw" loading="lazy" data-animate="case-img" /></div>
               <div className="rl-case-copy">
                 <h3 className="rl-case-title">{c.title}</h3>
                 <p className="rl-case-text meta"><strong>Client:</strong> {c.client} • <strong>Pays:</strong> {c.country} • <strong>Période:</strong> {c.period}</p>
@@ -282,9 +311,9 @@ export default function Realisations() {
 
         {/* Final CTA */}
         <div className="rl-final rl-section">
-          <h3 className="rl-final-title reveal">Besoin d’un aperçu détaillé ?</h3>
-          <p className="rl-final-text reveal">Recevez notre deck PDF ou échangez 15 minutes avec un chef de projet.</p>
-          <div className="rl-final-ctas reveal">
+          <h3 className="rl-final-title reveal" data-animate="final">Besoin d’un aperçu détaillé ?</h3>
+          <p className="rl-final-text reveal" data-animate="final">Recevez notre deck PDF ou échangez 15 minutes avec un chef de projet.</p>
+          <div className="rl-final-ctas reveal" data-animate="final">
             <a href="#" className="btn btn-primary">Télécharger le deck</a>
             <a href="#contact" className="btn btn-secondary">Nous contacter</a>
           </div>

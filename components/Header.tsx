@@ -110,12 +110,12 @@ export default function Header() {
         role="banner"
         aria-label="Site header"
       >
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: 12 }}>
+        <div className="container header-grid">
           {/* Left: Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <a href="/" aria-label="Homepage" className="header-item" style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+          <div className="header-left">
+            <a href="/" aria-label="Homepage" className="header-item header-brand-link">
               <Image src={logo} alt="Optimum" width={140} height={36} priority style={{ height: 36, width: 'auto' }} />
-              <span className="brand-name desktop-only" style={{ marginLeft: 10, fontWeight: 800, letterSpacing: '0.02em', fontSize: 18 }}>Optimum Solutions</span>
+              <span className="brand-name desktop-only">Optimum Solutions</span>
             </a>
           </div>
 
@@ -169,7 +169,7 @@ export default function Header() {
           </nav>
 
           {/* Right: Actions (search, contact quick, mobile menu) */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, alignItems: 'center' }}>
+          <div className="header-actions">
             <button
               ref={searchBtnRef}
               type="button"
